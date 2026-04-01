@@ -38,6 +38,29 @@ body{
   display:flex;flex-direction:column;
 }
 
+.identity-bar{
+  position:sticky; top:0; z-index:120;
+  background:rgba(255,248,251,.96); backdrop-filter:blur(10px);
+  border-bottom:0.5px solid var(--border); padding:12px 14px 10px;
+}
+.identity-head{display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:6px;}
+.identity-head strong{font-size:13px; font-weight:800; color:var(--ink);}
+.identity-chip{font-size:11px; font-weight:700; color:var(--pink-mid); background:var(--pink-bg); border:1px solid var(--pink); border-radius:999px; padding:4px 10px; white-space:nowrap;}
+.identity-row{display:flex; gap:8px; align-items:center;}
+.identity-input{flex:1; appearance:none; border:1px solid var(--border); border-radius:12px; background:#fff; padding:12px 14px; font:inherit; color:var(--ink); font-weight:700;}
+.identity-input::placeholder{color:#b08a99;}
+.identity-save{border:none; border-radius:12px; background:linear-gradient(135deg,var(--pink-deep),#ff6fa8); color:#fff; padding:12px 14px; font:inherit; font-size:13px; font-weight:800; cursor:pointer; white-space:nowrap; box-shadow:0 8px 20px rgba(212,83,126,.18);}
+.identity-help{margin-top:6px; font-size:11px; color:var(--sub); line-height:1.5;}
+
+.weekly-shell{padding:20px 18px 20px; display:flex; flex-direction:column; gap:12px; min-height:calc(100vh - var(--tab-h));}
+.weekly-note-card{background:#fff; border:0.5px solid var(--border); border-radius:18px; padding:16px; box-shadow:0 4px 16px rgba(212,83,126,0.06);}
+.weekly-note-card h3{font-size:14px; font-weight:800; color:var(--ink); margin-bottom:8px;}
+.weekly-note-card p{font-size:12px; color:var(--sub); line-height:1.6;}
+.weekly-frame-wrap{background:#fff; border:0.5px solid var(--border); border-radius:18px; overflow:hidden; box-shadow:0 4px 16px rgba(212,83,126,0.06);}
+.weekly-frame{display:block; width:100%; min-height:900px; height:calc(100vh - var(--tab-h) - 280px); border:0; background:#fff8fb;}
+@media (max-width:420px){ .weekly-frame{ min-height:860px; } }
+
+
 /* ═══ 탭 패널 ═══ */
 .tab-panel{display:none;flex:1;flex-direction:column;overflow-y:auto;padding-bottom:calc(var(--tab-h) + 16px);}
 .tab-panel.active{display:flex;}
@@ -499,6 +522,18 @@ body{
 </head>
 <body>
 <div class="app" id="app">
+<div class="identity-bar">
+  <div class="identity-head">
+    <strong>사용자 닉네임</strong>
+    <span class="identity-chip" id="identityChip">게스트</span>
+  </div>
+  <div class="identity-row">
+    <input class="identity-input" id="globalNicknameInput" maxlength="16" placeholder="예: 예현 / 로지공주" type="text"/>
+    <button class="identity-save" id="saveNicknameBtn" type="button">저장</button>
+  </div>
+  <div class="identity-help">회원가입 없이도 이 브라우저에서는 같은 닉네임으로 결과와 로그를 이어서 볼 수 있어요.</div>
+</div>
+
 
 <!-- ═══ TAB 1 : 데일리 ═══ -->
 <div class="tab-panel active" id="tab-daily">
@@ -643,71 +678,18 @@ body{
 
 <!-- ═══ TAB 2 : 주간 테스트 ═══ -->
 <div class="tab-panel" id="tab-weekly">
-
-  <!-- 2-1 랜딩 -->
-  <div id="w-landing">
-    <div class="w-landing">
-      <div class="w-hero">
-        <div style="font-size:32px;margin-bottom:10px;">🧭</div>
-        <h2>나의 에뛰튜드 테스트</h2>
-        <p>8개의 질문으로 지금의 메이크업 성향을 분석해드려요.<br>원할 때 언제든 다시 할 수 있어요.</p>
-      </div>
-      <div class="w-info-card">
-        <h3>테스트가 측정하는 4가지 축</h3>
-        <div class="w-axes">
-          <div class="w-axis"><div class="w-axis-icon">🌸</div><div class="w-axis-text"><strong>Soft ↔ Bold</strong> — 은은한 표현 vs 확실한 포인트</div></div>
-          <div class="w-axis"><div class="w-axis-icon">💧</div><div class="w-axis-text"><strong>Dewy ↔ Blur</strong> — 촉촉광 vs 보송 정리</div></div>
-          <div class="w-axis"><div class="w-axis-icon">✨</div><div class="w-axis-text"><strong>Easy ↔ Layer</strong> — 간단한 연출 vs 덧바르기 조합</div></div>
-          <div class="w-axis"><div class="w-axis-icon">🎉</div><div class="w-axis-text"><strong>Daily ↔ Party</strong> — 일상형 무드 vs 이벤트형 무드</div></div>
-        </div>
-      </div>
-      <button class="btn-start-test" onclick="startWeeklyTest()">테스트 시작하기 →</button>
-      <button class="btn-see-result" id="btnSeeResult" onclick="wShow('w-result')" style="display:none">내 결과 다시 보기</button>
+  <div class="weekly-shell">
+    <div class="w-hero" style="margin-bottom:0;">
+      <div style="font-size:32px;margin-bottom:10px;">🧭</div>
+      <h2>주간 픽셀 ETU-TUDE</h2>
+      <p>기존에 만들었던 픽셀 결과 리포트 버전으로 이어져요.<br>위에서 저장한 닉네임으로 관리자 로그도 같이 남아요.</p>
     </div>
-  </div>
-
-  <!-- 2-2 퀴즈 -->
-  <div id="w-quiz" class="hidden">
-    <div class="w-quiz">
-      <div class="w-quiz-header">
-        <div class="btn-back" onclick="wShow('w-landing')">←</div>
-        <strong style="font-size:14px;font-weight:800;color:var(--ink);">ETU-TUDE TEST</strong>
-      </div>
-      <div class="w-prog-wrap">
-        <span class="w-prog-txt" id="wProgTxt">1 / 8</span>
-        <div class="w-prog"><span id="wProgBar" style="width:12.5%"></span></div>
-      </div>
-      <div class="q-card">
-        <div class="q-axis" id="qAxis">Soft ↔ Bold</div>
-        <div class="q-text" id="qText"></div>
-        <div class="q-answers" id="qAnswers"></div>
-      </div>
+    <div class="weekly-note-card">
+      <h3>이 탭에서 되는 것</h3>
+      <p>닉네임은 상단 입력값을 그대로 사용하고, 테스트 완료 시 주간 결과가 마이페이지와 관리자 로그에 함께 반영돼요.</p>
     </div>
-  </div>
-
-  <!-- 2-3 결과 -->
-  <div id="w-result" class="hidden">
-    <div class="w-result">
-      <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;">
-        <div class="btn-back" onclick="wShow('w-landing')">←</div>
-        <strong style="font-size:15px;font-weight:800;color:var(--ink);">MY ETU-TUDE</strong>
-      </div>
-      <div class="w-res-card">
-        <div class="w-res-emoji" id="wResEmoji">🌷</div>
-        <h2 id="wResTitle">Rosy Glow Queen</h2>
-        <p id="wResSub">꾸민 티는 과하지 않은데, 오늘 얼굴 괜찮다는 말은 듣는 타입</p>
-        <div class="w-tags" id="wResTags"></div>
-      </div>
-      <div class="w-panel">
-        <h3>📊 나의 4축 성향</h3>
-        <div id="wMetrics"></div>
-        <div class="w-axis-caption" id="wAxisCaption"></div>
-        <div class="w-saved-badge" id="wSavedBadge" style="display:none">✦ 마이페이지에 저장됐어요</div>
-      </div>
-      <div class="w-btn-row">
-        <button class="w-btn-retry" onclick="startWeeklyTest()">다시 테스트하기</button>
-        <button class="w-btn-mypage" onclick="switchTab('tab-mypage')">마이페이지 보기 →</button>
-      </div>
+    <div class="weekly-frame-wrap">
+      <iframe class="weekly-frame" id="weeklyPixelFrame" src="pixel-weekly.html" title="ETU-TUDE Pixel Weekly Test"></iframe>
     </div>
   </div>
 </div>
@@ -719,7 +701,7 @@ body{
     <div class="my-header">
       <div class="my-avatar">👑</div>
       <div class="my-info">
-        <h2>나의 에뛰튜드</h2>
+        <h2 id="myTitleName">게스트님의 에뛰튜드</h2>
         <p id="mySubtitle">데이터를 쌓아보세요</p>
       </div>
     </div>
@@ -780,6 +762,47 @@ const TODAY = new Date().toISOString().slice(0,10);
 function gStore(k){try{return JSON.parse(localStorage.getItem(k));}catch{return null;}}
 function sStore(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch{}}
 
+const GLOBAL_NICK_KEY='etutude_user_nickname';
+function sanitizeSharedNickname(value){ return String(value || '').replace(/\s+/g,' ').trim().slice(0,16); }
+function getSharedNickname(){
+  try{
+    const direct = sanitizeSharedNickname(localStorage.getItem(GLOBAL_NICK_KEY) || '');
+    if(direct) return direct;
+    const legacy = sanitizeSharedNickname(localStorage.getItem('etutude_last_nickname') || '');
+    if(legacy) return legacy;
+  }catch(e){}
+  return '';
+}
+function getDisplayNickname(){ return getSharedNickname() || '게스트'; }
+function renderGlobalNickname(){
+  const input = document.getElementById('globalNicknameInput');
+  const chip = document.getElementById('identityChip');
+  const title = document.getElementById('myTitleName');
+  const name = getDisplayNickname();
+  if(input && document.activeElement !== input){ input.value = getSharedNickname(); }
+  if(chip) chip.textContent = name;
+  if(title) title.textContent = `${name}님의 에뛰튜드`;
+}
+function syncWeeklyFrameNickname(){
+  const frame = document.getElementById('weeklyPixelFrame');
+  try{ if(frame && frame.contentWindow && typeof frame.contentWindow.syncNicknameFromShared === 'function'){ frame.contentWindow.syncNicknameFromShared(); } }catch(e){}
+}
+function saveGlobalNickname(){
+  const input = document.getElementById('globalNicknameInput');
+  const next = sanitizeSharedNickname(input ? input.value : '');
+  try{
+    if(next){
+      localStorage.setItem(GLOBAL_NICK_KEY, next);
+      localStorage.setItem('etutude_last_nickname', next);
+    }else{
+      localStorage.removeItem(GLOBAL_NICK_KEY);
+    }
+  }catch(e){}
+  renderGlobalNickname();
+  syncWeeklyFrameNickname();
+}
+
+
 /* ══════ 탭 전환 ══════ */
 function switchTab(id){
   if(id!=='tab-daily') stopDailyPodcast();
@@ -791,7 +814,7 @@ function switchTab(id){
   if(btn) btn.classList.add('active');
   if(id==='tab-mypage') renderMypage();
   if(id==='tab-daily') initDailyLanding();
-  if(id==='tab-weekly') initWeeklyLanding();
+  if(id==='tab-weekly'){ initWeeklyLanding(); syncWeeklyFrameNickname(); }
 }
 
 /* ══════════════════════════════
@@ -905,6 +928,7 @@ function getOrCreateSessionId(){
 
 async function saveMergedResult(payload){
   try{
+    payload.nickname = getDisplayNickname();
     await fetch('/api/results', {
       method:'POST',
       headers:{'Content-Type':'application/json'},
@@ -928,6 +952,7 @@ function saveDailyLog(teamKey){
     answers:[],
     lang:'ko',
     source:'merged-daily',
+    nickname:getDisplayNickname(),
     createdAt:new Date().toISOString()
   });
 }
@@ -943,6 +968,7 @@ function saveWeeklyLog(resultKey, profile, pcts, scores){
     answers:[],
     lang:'ko',
     source:'merged-weekly',
+    nickname:getDisplayNickname(),
     createdAt:new Date().toISOString()
   });
 }
@@ -1056,9 +1082,7 @@ const typeVectors={
 let wCurrent=0,wScores={soft:0,bold:0,dewy:0,blur:0,easy:0,layer:0,daily:0,party:0};
 
 function initWeeklyLanding(){
-  const wr=gStore('etutude_weekly_result');
-  const btn=document.getElementById('btnSeeResult');
-  if(btn) btn.style.display=wr?'':'none';
+  syncWeeklyFrameNickname();
 }
 
 function wShow(id){
@@ -1147,8 +1171,11 @@ function renderMypage(){
   const ds=getDailyStats();
   const wr=gStore('etutude_weekly_result');
 
+  renderGlobalNickname();
   // 서브타이틀
   const sub=[];
+  const nick = getDisplayNickname();
+  if(nick && nick !== '게스트') sub.push(nick);
   if(ds.total>0) sub.push(`${ds.total}번 플레이`);
   if(wr) sub.push(wr.title);
   document.getElementById('mySubtitle').textContent=sub.length?sub.join(' · '):'데이터를 쌓아보세요';
@@ -1238,6 +1265,14 @@ function renderMypage(){
 }
 
 /* ══ 초기 실행 ══ */
+const saveNicknameBtn = document.getElementById('saveNicknameBtn');
+if(saveNicknameBtn) saveNicknameBtn.addEventListener('click', saveGlobalNickname);
+const globalNicknameInput = document.getElementById('globalNicknameInput');
+if(globalNicknameInput){
+  globalNicknameInput.addEventListener('change', saveGlobalNickname);
+  globalNicknameInput.addEventListener('keydown', (e)=>{ if(e.key==='Enter'){ e.preventDefault(); saveGlobalNickname(); }});
+}
+renderGlobalNickname();
 initDailyLanding();
 initWeeklyLanding();
 </script>
