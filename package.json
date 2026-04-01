@@ -1,12 +1,8 @@
 {
-  "name": "etutude-deploy-package",
-  "version": "1.1.0",
+  "name": "etutude-vercel-supabase",
   "private": true,
-  "description": "ETU-TUDE prototype with result saving and owner dashboard",
-  "engines": {
-    "node": ">=18"
-  },
-  "scripts": {
-    "start": "node server.js"
+  "version": "1.0.0",
+  "dependencies": {
+    "@supabase/supabase-js": "^2.0.0"
   }
 }

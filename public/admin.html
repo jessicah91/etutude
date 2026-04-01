@@ -43,7 +43,7 @@
     <div class="top">
       <div>
         <h1>OWNER DASHBOARD</h1>
-        <div class="sub">ETU-TUDE 테스트 결과를 저장하고 보는 관리자 전용 화면이에요.</div>
+        <div class="sub">Supabase에 저장된 ETU-TUDE 테스트 결과를 보는 관리자 전용 화면이에요.</div>
       </div>
       <div class="row-actions">
         <a class="btn" href="/" target="_blank" rel="noopener">테스트 열기</a>
@@ -193,6 +193,11 @@
       await loadStats();
       await loadResults();
     })();
+  </script>
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/sw.js').catch(()=>{});
+    }
   </script>
 </body>
 </html>

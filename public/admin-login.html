@@ -5,6 +5,10 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>ETU-TUDE 관리자 로그인</title>
+
+  <meta name="theme-color" content="#ff79ad" />
+  <link rel="manifest" href="/manifest.webmanifest" />
+  <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" />
   <style>
     body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Noto Sans KR",sans-serif;background:#ffd7ea;color:#3e2d36}
     .wrap{min-height:100vh;display:grid;place-items:center;padding:24px;background:
@@ -35,7 +39,7 @@
         <button type="submit">로그인</button>
         <div class="error" id="errorBox">로그인에 실패했어요. 아이디와 비밀번호를 다시 확인해 주세요.</div>
       </form>
-      <div class="hint">배포할 때는 <strong>ADMIN_USERNAME</strong>, <strong>ADMIN_PASSWORD</strong> 환경변수를 꼭 설정해 주세요.</div>
+      <div class="hint">배포할 때는 <strong>SUPABASE_URL</strong>, <strong>SUPABASE_SERVICE_ROLE_KEY</strong>, <strong>ADMIN_USERNAME</strong>, <strong>ADMIN_PASSWORD</strong>, <strong>ADMIN_SESSION_SECRET</strong> 환경변수를 꼭 설정해 주세요.</div>
       <div class="mini">공개 배포 전에는 꼭 비밀번호를 바꿔 주세요.</div>
     </div>
   </div>
@@ -66,6 +70,11 @@
         errorBox.style.display='block';
       }
     });
+  </script>
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/sw.js').catch(()=>{});
+    }
   </script>
 </body>
 </html>

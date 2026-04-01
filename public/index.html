@@ -5,6 +5,13 @@
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <title>ETU-TUDE | 나의 에뛰튜드 찾기</title>
+<meta name="theme-color" content="#ff79ad"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="default"/>
+<meta name="apple-mobile-web-app-title" content="ETU-TUDE"/>
+<link rel="manifest" href="/manifest.webmanifest"/>
+<link rel="apple-touch-icon" href="/icons/apple-touch-icon.png"/>
+<link rel="icon" type="image/png" sizes="64x64" href="/icons/favicon.png"/>
 <style>
     @font-face {
       font-family:"AritaDotumKR";
@@ -725,10 +732,35 @@
     .owner-chip{display:inline-flex; align-items:center; padding:5px 8px; font-size:11px; font-weight:800; border-radius:4px; border:2px solid rgba(75,54,64,.78); background:#fff7fa; box-shadow:2px 2px 0 rgba(62,45,54,.10)}
     .owner-log-empty{padding:24px 12px; text-align:center; color:#826b76; line-height:1.6}
 
+.pwa-install-wrap{position:fixed; right:16px; bottom:16px; z-index:80; display:none; max-width:min(88vw,320px)}
+    .pwa-install-wrap.show{display:block}
+    .pwa-install-card{border:3px solid #4b3640; background:
+      linear-gradient(0deg, rgba(255,255,255,.12) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,.12) 1px, transparent 1px),
+      linear-gradient(180deg,#fff7fb 0%,#ffe6f2 100%);
+      background-size:12px 12px,12px 12px,100% 100%;
+      box-shadow:6px 6px 0 rgba(75,54,64,.18); padding:12px}
+    .pwa-install-title{font-size:13px; font-weight:900; margin:0 0 6px; color:#4b3640}
+    .pwa-install-text{font-size:12px; line-height:1.55; color:#6a4c59; margin:0 0 10px}
+    .pwa-install-actions{display:flex; gap:8px}
+    .pwa-install-btn,.pwa-dismiss-btn{appearance:none; border:3px solid #4b3640; cursor:pointer; font-weight:900; font-size:12px; padding:10px 12px; box-shadow:3px 3px 0 rgba(75,54,64,.16)}
+    .pwa-install-btn{background:#ff79ad; color:#fff; flex:1}
+    .pwa-dismiss-btn{background:#fff; color:#4b3640}
+
 </style>
 <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
 </head>
 <body>
+<div class="pwa-install-wrap" id="pwaInstallWrap" aria-live="polite">
+  <div class="pwa-install-card">
+    <p class="pwa-install-title" id="pwaInstallTitle">홈 화면에 추가</p>
+    <p class="pwa-install-text" id="pwaInstallText">설치해두면 앱처럼 바로 열 수 있어요.</p>
+    <div class="pwa-install-actions">
+      <button class="pwa-install-btn" id="pwaInstallBtn" type="button">설치하기</button>
+      <button class="pwa-dismiss-btn" id="pwaDismissBtn" type="button">닫기</button>
+    </div>
+  </div>
+</div>
 <div class="app">
 <div class="lang-switch"><div class="lang-box">
 <button class="lang-btn active" data-lang="ko">KR</button>
@@ -2803,6 +2835,108 @@ document.querySelectorAll('.tab-btn').forEach(btn=>{
     document.getElementById('changePanel').classList.toggle('hidden', tab!=='change');
   });
 });
+</script>
+<script>
+(function(){
+  const WRAP = document.getElementById('pwaInstallWrap');
+  const BTN = document.getElementById('pwaInstallBtn');
+  const DISMISS = document.getElementById('pwaDismissBtn');
+  const TITLE = document.getElementById('pwaInstallTitle');
+  const TEXT = document.getElementById('pwaInstallText');
+  let deferredPrompt = null;
+
+  const installCopy = {
+    ko:{title:'홈 화면에 추가', text:'설치해두면 앱처럼 바로 열 수 있어요.', button:'설치하기', dismiss:'닫기', iosText:'Safari 공유 버튼 → "홈 화면에 추가"를 누르면 앱처럼 쓸 수 있어요.'},
+    en:{title:'Add to Home Screen', text:'Install it to open like an app.', button:'Install', dismiss:'Close', iosText:'Tap Safari share → "Add to Home Screen" to use it like an app.'},
+    ja:{title:'ホーム画面に追加', text:'インストールするとアプリのように開けます。', button:'インストール', dismiss:'閉じる', iosText:'Safariの共有 →「ホーム画面に追加」でアプリのように使えます。'},
+    zh:{title:'添加到主屏幕', text:'安装后就能像应用一样打开。', button:'安装', dismiss:'关闭', iosText:'在 Safari 中点分享 →“添加到主屏幕”，就能像应用一样使用。'}
+  };
+
+  function getLang(){
+    try { return window.currentLang || document.documentElement.lang || 'ko'; }
+    catch(e){ return 'ko'; }
+  }
+
+  function applyCopy(isIOS){
+    const lang = getLang();
+    const copy = installCopy[lang] || installCopy.ko;
+    TITLE.textContent = copy.title;
+    TEXT.textContent = isIOS ? copy.iosText : copy.text;
+    BTN.textContent = isIOS ? (lang==='en'?'Guide':lang==='ja'?'案内':lang==='zh'?'说明':'안내') : copy.button;
+    DISMISS.textContent = copy.dismiss;
+  }
+
+  function showPrompt(type){
+    if (!WRAP) return;
+    if (sessionStorage.getItem('pwa_prompt_dismissed') === '1') return;
+    applyCopy(type === 'ios');
+    WRAP.classList.add('show');
+    BTN.dataset.mode = type;
+  }
+
+  function hidePrompt(){
+    if (!WRAP) return;
+    WRAP.classList.remove('show');
+  }
+
+  function isStandalone(){
+    return window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+  }
+
+  function isIOS(){
+    return /iphone|ipad|ipod/i.test(window.navigator.userAgent);
+  }
+
+  async function registerSW(){
+    if (!('serviceWorker' in navigator)) return;
+    try{
+      await navigator.serviceWorker.register('/sw.js');
+    }catch(e){
+      console.warn('SW register failed', e);
+    }
+  }
+
+  window.addEventListener('beforeinstallprompt', (e)=>{
+    e.preventDefault();
+    deferredPrompt = e;
+    showPrompt('native');
+  });
+
+  window.addEventListener('appinstalled', ()=>{
+    deferredPrompt = null;
+    hidePrompt();
+  });
+
+  BTN && BTN.addEventListener('click', async ()=>{
+    const mode = BTN.dataset.mode;
+    if (mode === 'native' && deferredPrompt){
+      deferredPrompt.prompt();
+      try{ await deferredPrompt.userChoice; }catch(e){}
+      deferredPrompt = null;
+      hidePrompt();
+      return;
+    }
+    if (mode === 'ios'){
+      alert(TEXT.textContent);
+    }
+  });
+
+  DISMISS && DISMISS.addEventListener('click', ()=>{
+    sessionStorage.setItem('pwa_prompt_dismissed', '1');
+    hidePrompt();
+  });
+
+  document.addEventListener('DOMContentLoaded', ()=>{
+    registerSW();
+    if (isStandalone()) return;
+    const isi = isIOS();
+    if (isi && /safari/i.test(window.navigator.userAgent) && !/crios|fxios|edgios/i.test(window.navigator.userAgent)){
+      setTimeout(()=>showPrompt('ios'), 1200);
+    } else if (deferredPrompt) {
+      showPrompt('native');
+    }
+  });
+})();
 </script>
 </body>
 </html>
