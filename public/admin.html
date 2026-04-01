@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -23,6 +22,7 @@
     .stat{padding:18px}
     .label{font-size:12px;font-weight:900;color:#7e5a6d;margin-bottom:8px}
     .value{font-size:28px;font-weight:900}
+    .value.compact{font-size:18px;line-height:1.45}
     .filters{padding:16px;display:grid;grid-template-columns:1.2fr 1fr 1fr auto;gap:10px;align-items:end;margin-bottom:18px}
     .filters label{display:block;font-size:12px;font-weight:800;margin-bottom:6px}
     .filters input,.filters select{width:100%;padding:12px;border:3px solid var(--line);background:#fff;font-size:14px}
@@ -31,6 +31,8 @@
     th,td{padding:12px 10px;border-bottom:2px solid #f0c9da;text-align:left;vertical-align:top;font-size:14px}
     th{background:#fff0f7;font-size:12px;letter-spacing:.02em}
     .chip{display:inline-block;padding:6px 8px;border:2px solid var(--line);background:#fff0f7;font-size:12px;font-weight:800;margin:2px 4px 2px 0}
+    .chip.kind-daily{background:#fff1f6}
+    .chip.kind-weekly{background:#f4efff}
     .muted{color:#7a6370;font-size:12px;line-height:1.4}
     .empty{padding:30px;text-align:center;color:#7a6370}
     .row-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
@@ -43,7 +45,7 @@
     <div class="top">
       <div>
         <h1>OWNER DASHBOARD</h1>
-        <div class="sub">Supabase에 저장된 ETU-TUDE 테스트 결과를 보는 관리자 전용 화면이에요.</div>
+        <div class="sub">데일리 테스트와 주간 픽셀 테스트 결과를 함께 보는 관리자 전용 화면이에요.</div>
       </div>
       <div class="row-actions">
         <a class="btn" href="/" target="_blank" rel="noopener">테스트 열기</a>
@@ -54,8 +56,8 @@
     <div class="stats">
       <div class="stat"><div class="label">총 테스트 수</div><div class="value" id="statTotal">-</div></div>
       <div class="stat"><div class="label">오늘 테스트 수</div><div class="value" id="statToday">-</div></div>
-      <div class="stat"><div class="label">가장 많이 나온 타입</div><div class="value" id="statTopType" style="font-size:18px;line-height:1.4">-</div></div>
-      <div class="stat"><div class="label">최근 닉네임 수</div><div class="value" id="statNicknames">-</div></div>
+      <div class="stat"><div class="label">인기 있는 데일리 team</div><div class="value compact" id="statTopDailyTeam">-</div></div>
+      <div class="stat"><div class="label">주간 테스트 최다 타입</div><div class="value compact" id="statTopWeeklyType">-</div></div>
     </div>
 
     <div class="card filters">
@@ -93,7 +95,7 @@
           <tr>
             <th style="width:160px;">시간</th>
             <th style="width:110px;">별명</th>
-            <th style="width:210px;">결과</th>
+            <th style="width:230px;">결과</th>
             <th style="width:90px;">언어</th>
             <th style="width:180px;">점수</th>
             <th>답변 기록</th>
@@ -143,6 +145,19 @@
       };
     }
 
+    function getKind(item){
+      return String(item.resultKey || '').toLowerCase().startsWith('daily-') ? 'daily' : 'weekly';
+    }
+
+    function getResultLabel(item){
+      const kind = getKind(item);
+      if(kind === 'daily'){
+        if(item.resultKey === 'daily-warm') return 'team 다굽자';
+        if(item.resultKey === 'daily-cool') return 'team 다얼자';
+      }
+      return item.resultTitle || item.resultKey || '-';
+    }
+
     function renderRows(){
       const q = document.getElementById('searchInput').value.trim().toLowerCase();
       const lang = document.getElementById('langFilter').value;
@@ -163,16 +178,26 @@
         return;
       }
       empty.style.display='none';
-      body.innerHTML = filtered.map(item => `
-        <tr>
-          <td>${formatDate(item.createdAt || item.receivedAt)}</td>
-          <td><strong>${item.nickname || '-'}</strong><div class="muted">${item.sessionId || ''}</div></td>
-          <td><div><strong>${item.resultTitle || '-'}</strong></div><div class="muted">${item.resultKey || '-'}</div><div class="muted">${item.oneLine || ''}</div></td>
-          <td>${item.lang || '-'}</td>
-          <td>${scoreChips(item.pcts)}</td>
-          <td><div class="muted">${Array.isArray(item.answers) ? item.answers.join(', ') : '-'}</div></td>
-        </tr>
-      `).join('');
+      body.innerHTML = filtered.map(item => {
+        const kind = getKind(item);
+        const kindLabel = kind === 'daily' ? '데일리' : '주간';
+        const kindClass = kind === 'daily' ? 'kind-daily' : 'kind-weekly';
+        return `
+          <tr>
+            <td>${formatDate(item.createdAt || item.receivedAt)}</td>
+            <td><strong>${item.nickname || '-'}</strong><div class="muted">${item.sessionId || ''}</div></td>
+            <td>
+              <div><span class="chip ${kindClass}">${kindLabel}</span></div>
+              <div><strong>${getResultLabel(item)}</strong></div>
+              <div class="muted">${item.resultKey || '-'}</div>
+              <div class="muted">${item.oneLine || ''}</div>
+            </td>
+            <td>${item.lang || '-'}</td>
+            <td>${scoreChips(item.pcts)}</td>
+            <td><div class="muted">${Array.isArray(item.answers) && item.answers.length ? item.answers.join(', ') : '-'}</div></td>
+          </tr>
+        `;
+      }).join('');
     }
 
     async function loadStats(){
@@ -180,8 +205,8 @@
       const data = await res.json();
       document.getElementById('statTotal').textContent = data.total || 0;
       document.getElementById('statToday').textContent = data.today || 0;
-      document.getElementById('statTopType').textContent = data.topType || '-';
-      document.getElementById('statNicknames').textContent = data.nicknameCount || 0;
+      document.getElementById('statTopDailyTeam').textContent = data.topDailyTeam || '-';
+      document.getElementById('statTopWeeklyType').textContent = data.topWeeklyType || '-';
     }
 
     async function loadResults(){
