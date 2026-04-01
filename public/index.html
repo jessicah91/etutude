@@ -52,13 +52,11 @@ body{
 .identity-save{border:none; border-radius:12px; background:linear-gradient(135deg,var(--pink-deep),#ff6fa8); color:#fff; padding:12px 14px; font:inherit; font-size:13px; font-weight:800; cursor:pointer; white-space:nowrap; box-shadow:0 8px 20px rgba(212,83,126,.18);}
 .identity-help{margin-top:6px; font-size:11px; color:var(--sub); line-height:1.5;}
 
-.weekly-shell{padding:20px 18px 20px; display:flex; flex-direction:column; gap:12px; min-height:calc(100vh - var(--tab-h));}
-.weekly-note-card{background:#fff; border:0.5px solid var(--border); border-radius:18px; padding:16px; box-shadow:0 4px 16px rgba(212,83,126,0.06);}
-.weekly-note-card h3{font-size:14px; font-weight:800; color:var(--ink); margin-bottom:8px;}
-.weekly-note-card p{font-size:12px; color:var(--sub); line-height:1.6;}
-.weekly-frame-wrap{background:#fff; border:0.5px solid var(--border); border-radius:18px; overflow:hidden; box-shadow:0 4px 16px rgba(212,83,126,0.06);}
-.weekly-frame{display:block; width:100%; min-height:900px; height:calc(100vh - var(--tab-h) - 280px); border:0; background:#fff8fb;}
-@media (max-width:420px){ .weekly-frame{ min-height:860px; } }
+ .weekly-shell{padding:0; display:flex; flex-direction:column; min-height:calc(100vh - var(--tab-h));}
+.weekly-note-card{display:none;}
+.weekly-frame-wrap{background:transparent; border:0; border-radius:0; overflow:hidden; box-shadow:none; flex:1;}
+.weekly-frame{display:block; width:100%; min-height:calc(100vh - var(--tab-h) - 8px); height:calc(100vh - var(--tab-h) - 8px); border:0; background:#fff8fb;}
+@media (max-width:420px){ .weekly-frame{ min-height:calc(100vh - var(--tab-h) - 8px); } }
 
 
 /* ═══ 탭 패널 ═══ */
@@ -679,15 +677,6 @@ body{
 <!-- ═══ TAB 2 : 주간 테스트 ═══ -->
 <div class="tab-panel" id="tab-weekly">
   <div class="weekly-shell">
-    <div class="w-hero" style="margin-bottom:0;">
-      <div style="font-size:32px;margin-bottom:10px;">🧭</div>
-      <h2>주간 픽셀 ETU-TUDE</h2>
-      <p>기존에 만들었던 픽셀 결과 리포트 버전으로 이어져요.<br>위에서 저장한 닉네임으로 관리자 로그도 같이 남아요.</p>
-    </div>
-    <div class="weekly-note-card">
-      <h3>이 탭에서 되는 것</h3>
-      <p>닉네임은 상단 입력값을 그대로 사용하고, 테스트 완료 시 주간 결과가 마이페이지와 관리자 로그에 함께 반영돼요.</p>
-    </div>
     <div class="weekly-frame-wrap">
       <iframe class="weekly-frame" id="weeklyPixelFrame" src="pixel-weekly.html" title="ETU-TUDE Pixel Weekly Test"></iframe>
     </div>
