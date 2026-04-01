@@ -2,34 +2,58 @@ const { sendJson } = require('../../lib/http');
 const { getSession } = require('../../lib/admin-auth');
 const { getSupabaseAdmin } = require('../../lib/supabase');
 
+function isDaily(item) {
+  const key = String(item.result_key || '').toLowerCase();
+  return key.startsWith('daily-');
+}
+
+function dailyTeamLabel(item) {
+  const key = String(item.result_key || '').toLowerCase();
+  if (key === 'daily-warm') return 'team 다굽자';
+  if (key === 'daily-cool') return 'team 다얼자';
+  return item.result_title || item.result_key || '-';
+}
+
+function weeklyTypeLabel(item) {
+  return String(item.result_title || item.result_key || '-');
+}
+
+function buildTopLabel(counter) {
+  let topLabel = '-';
+  let topCount = 0;
+  for (const [label, count] of counter.entries()) {
+    if (count > topCount) {
+      topLabel = `${label} (${count})`;
+      topCount = count;
+    }
+  }
+  return topLabel;
+}
+
 function buildStats(items) {
   const todayKey = new Date().toISOString().slice(0, 10);
-  const typeCount = new Map();
-  const nicknames = new Set();
+  const dailyCounter = new Map();
+  const weeklyCounter = new Map();
   let today = 0;
 
   for (const item of items) {
-    const key = String(item.result_title || item.result_key || '-');
-    typeCount.set(key, (typeCount.get(key) || 0) + 1);
-    if ((item.nickname || '').trim()) nicknames.add(item.nickname.trim());
     const dateKey = String(item.created_at || item.received_at || '').slice(0, 10);
     if (dateKey === todayKey) today += 1;
-  }
 
-  let topType = '-';
-  let topCount = 0;
-  for (const [key, count] of typeCount.entries()) {
-    if (count > topCount) {
-      topType = `${key} (${count})`;
-      topCount = count;
+    if (isDaily(item)) {
+      const label = dailyTeamLabel(item);
+      dailyCounter.set(label, (dailyCounter.get(label) || 0) + 1);
+    } else {
+      const label = weeklyTypeLabel(item);
+      weeklyCounter.set(label, (weeklyCounter.get(label) || 0) + 1);
     }
   }
 
   return {
     total: items.length,
     today,
-    topType,
-    nicknameCount: nicknames.size,
+    topDailyTeam: buildTopLabel(dailyCounter),
+    topWeeklyType: buildTopLabel(weeklyCounter),
   };
 }
 
