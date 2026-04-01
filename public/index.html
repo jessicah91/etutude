@@ -549,6 +549,19 @@
         linear-gradient(180deg,#fff 0%,#fff6fa 100%) !important;
       background-size:12px 12px,12px 12px,100% 100% !important;
     }
+    .link-btn.primary,
+    a.link-btn.primary,
+    button.link-btn.primary{
+      background:
+        linear-gradient(0deg, rgba(255,255,255,.12) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,.12) 1px, transparent 1px),
+        linear-gradient(90deg,var(--theme2,#ff5f9a),var(--theme1,#ff8fbc)) !important;
+      background-size:12px 12px,12px 12px,100% 100% !important;
+      color:#fff !important;
+      -webkit-text-fill-color:#fff !important;
+      border-color:transparent !important;
+    }
+    
     .cta:hover,.secondary:hover,.answer-btn:hover,.small-btn:hover,.tab-btn:hover,.link-btn:hover,.back:hover,.lang-btn:hover{
       transform:translate(2px,2px) !important;
       box-shadow:2px 2px 0 rgba(62,45,54,.14) !important;
@@ -2146,6 +2159,8 @@ function ensureCommerceButtonLabels(dict){
     oliveyoungBtn: safeDict.oliveyoungBtn || i18n.ko.oliveyoungBtn,
     joinLoginBtn: safeDict.joinLoginBtn || i18n.ko.joinLoginBtn,
     joinShopBtn: safeDict.joinShopBtn || i18n.ko.joinShopBtn,
+    saveShareBtn: safeDict.saveShareBtn || i18n.ko.saveShareBtn,
+    shareNativeBtn: safeDict.shareNativeBtn || i18n.ko.shareNativeBtn,
   };
   Object.entries(labels).forEach(([id, label]) => {
     const el = document.getElementById(id);
@@ -2159,8 +2174,12 @@ function ensureCommerceButtonLabels(dict){
   if(joinShop) joinShop.textContent = labels.joinShopBtn;
   const official = document.getElementById('officialShopBtn');
   const olive = document.getElementById('oliveyoungBtn');
+  const saveShare = document.getElementById('saveShareBtn');
+  const shareNative = document.getElementById('shareNativeBtn');
   if(official) official.textContent = labels.officialShopBtn;
   if(olive) olive.textContent = labels.oliveyoungBtn;
+  if(saveShare) saveShare.textContent = labels.saveShareBtn;
+  if(shareNative) shareNative.textContent = labels.shareNativeBtn;
 }
 
 function setLanguage(lang){ currentLang=lang; applyI18n(); }
