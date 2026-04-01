@@ -122,11 +122,25 @@
     }
 
     function scoreChips(pcts){
-      if(!pcts) return '-';
+      if(!pcts || typeof pcts !== 'object') return '-';
       return ['soft','dewy','easy','daily'].map(key => {
         const label = key.charAt(0).toUpperCase() + key.slice(1);
         return `<span class="chip">${label} ${pcts[key] ?? '-'}%</span>`;
       }).join('');
+    }
+
+    function normalizeItem(item){
+      return {
+        ...item,
+        sessionId: item.sessionId || item.session_id || '',
+        resultKey: item.resultKey || item.result_key || '',
+        resultTitle: item.resultTitle || item.result_title || '',
+        oneLine: item.oneLine || item.one_line || '',
+        createdAt: item.createdAt || item.created_at || '',
+        receivedAt: item.receivedAt || item.received_at || '',
+        pcts: item.pcts || {},
+        answers: Array.isArray(item.answers) ? item.answers : [],
+      };
     }
 
     function renderRows(){
@@ -134,7 +148,7 @@
       const lang = document.getElementById('langFilter').value;
       const limit = Number(document.getElementById('limitFilter').value || 50);
 
-      const filtered = allItems.filter(item => {
+      const filtered = allItems.map(normalizeItem).filter(item => {
         const hitText = [item.nickname, item.resultTitle, item.resultKey, item.oneLine].join(' ').toLowerCase();
         const searchOk = !q || hitText.includes(q);
         const langOk = !lang || item.lang === lang;

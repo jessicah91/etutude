@@ -286,7 +286,7 @@
 
 
     .product-actions{display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:12px}
-    .link-btn{appearance:none; border:none; border-radius:16px; padding:14px 14px; font-weight:800; font-size:14px; cursor:pointer; background:linear-gradient(180deg,#fff 0%,#fff5f9 100%); color:var(--ink); border:1px solid var(--line); box-shadow:0 8px 18px rgba(188,86,130,.08); text-align:center; text-decoration:none}
+    .link-btn{appearance:none; border:none; border-radius:16px; padding:14px 14px; min-height:52px; font-weight:800; font-size:14px; line-height:1.35; cursor:pointer; background:linear-gradient(180deg,#fff 0%,#fff5f9 100%); color:var(--ink); -webkit-text-fill-color:currentColor; border:1px solid var(--line); box-shadow:0 8px 18px rgba(188,86,130,.08); text-align:center; text-decoration:none; display:flex; align-items:center; justify-content:center; word-break:keep-all}
     .link-btn.primary{background:linear-gradient(180deg,var(--theme2,#ff6ea7),var(--theme1,#ff99bf)); color:#fff; border-color:transparent}
     .share-actions{display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:12px}
     .helper{font-size:12px; color:var(--sub); line-height:1.5; margin-top:8px}
@@ -984,8 +984,8 @@
 <div class="join-benefit"><strong data-i18n="joinBenefit2Title">맞춤 제품 저장</strong><span data-i18n="joinBenefit2Desc">오늘 결과에 맞는 추천 제품을 위시리스트처럼 저장해둘 수 있어요.</span></div>
 </div>
 <div class="join-actions">
-<a class="link-btn primary" data-i18n="joinLoginBtn" href="https://www.amoremall.com/kr/ko/login" rel="noopener noreferrer" target="_blank">뷰티포인트 통합회원 로그인 / 가입</a>
-<a class="link-btn" data-i18n="joinShopBtn" href="https://www.amoremall.com/kr/ko/display/brand/detail?brandSn=205" rel="noopener noreferrer" target="_blank">공식몰에서 이어보기</a>
+<a class="link-btn primary" data-i18n="joinLoginBtn" id="joinLoginBtn" href="https://www.amoremall.com/kr/ko/login" rel="noopener noreferrer" target="_blank">뷰티포인트 통합회원 로그인 / 가입</a>
+<a class="link-btn" data-i18n="joinShopBtn" id="joinShopBtn" href="https://www.amoremall.com/kr/ko/display/brand/detail?brandSn=205" rel="noopener noreferrer" target="_blank">공식몰에서 이어보기</a>
 </div>
 </div>
 <div class="share-card" id="shareCard">
@@ -2137,7 +2137,32 @@ function applyI18n(){ document.documentElement.lang=currentLang;
   if(typeof renderAllResultsGrid==='function' && document.getElementById('allResultsScreen').classList.contains('active')) renderAllResultsGrid();
   if(typeof renderQRScreen==='function') renderQRScreen();
   const allDesc=document.getElementById('allResultsDesc'); if(allDesc && dict.allResultsDesc) allDesc.innerHTML=dict.allResultsDesc;
+  ensureCommerceButtonLabels(dict);
 }
+function ensureCommerceButtonLabels(dict){
+  const safeDict = dict || i18n[currentLang] || i18n.ko;
+  const labels = {
+    officialShopBtn: safeDict.officialShopBtn || i18n.ko.officialShopBtn,
+    oliveyoungBtn: safeDict.oliveyoungBtn || i18n.ko.oliveyoungBtn,
+    joinLoginBtn: safeDict.joinLoginBtn || i18n.ko.joinLoginBtn,
+    joinShopBtn: safeDict.joinShopBtn || i18n.ko.joinShopBtn,
+  };
+  Object.entries(labels).forEach(([id, label]) => {
+    const el = document.getElementById(id);
+    if (el && !String(el.textContent || '').trim()) {
+      el.textContent = label;
+    }
+  });
+  const joinLogin = document.getElementById('joinLoginBtn');
+  const joinShop = document.getElementById('joinShopBtn');
+  if(joinLogin) joinLogin.textContent = labels.joinLoginBtn;
+  if(joinShop) joinShop.textContent = labels.joinShopBtn;
+  const official = document.getElementById('officialShopBtn');
+  const olive = document.getElementById('oliveyoungBtn');
+  if(official) official.textContent = labels.officialShopBtn;
+  if(olive) olive.textContent = labels.oliveyoungBtn;
+}
+
 function setLanguage(lang){ currentLang=lang; applyI18n(); }
 document.querySelectorAll('.lang-btn').forEach(btn=>btn.addEventListener('click', ()=>setLanguage(btn.dataset.lang)));
 
@@ -2451,6 +2476,7 @@ function updateOutboundLinks(){
   if(oliveBtn) oliveBtn.href = olive;
   document.querySelectorAll('a[data-i18n="joinShopBtn"]').forEach(el=>el.href=official);
   document.querySelectorAll('a[data-i18n="joinLoginBtn"]').forEach(el=>el.href=login);
+  ensureCommerceButtonLabels(i18n[currentLang] || i18n.ko);
 }
 let scannerStream = null;
 let scannerTimer = null;

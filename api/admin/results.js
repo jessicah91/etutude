@@ -24,7 +24,17 @@ module.exports = async (req, res) => {
       return sendJson(res, 500, { ok: false, message: error.message });
     }
 
-    return sendJson(res, 200, Array.isArray(data) ? data : []);
+    const items = Array.isArray(data) ? data.map((item) => ({
+      ...item,
+      sessionId: item.session_id || '',
+      resultKey: item.result_key || '',
+      resultTitle: item.result_title || '',
+      oneLine: item.one_line || '',
+      createdAt: item.created_at || '',
+      receivedAt: item.received_at || '',
+    })) : [];
+
+    return sendJson(res, 200, items);
   } catch (err) {
     return sendJson(res, 500, { ok: false, message: err.message || 'Unexpected error' });
   }
