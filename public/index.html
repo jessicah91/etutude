@@ -51,6 +51,9 @@ body{
 .identity-input::placeholder{color:#b08a99;}
 .identity-save{border:none; border-radius:12px; background:linear-gradient(135deg,var(--pink-deep),#ff6fa8); color:#fff; padding:12px 14px; font:inherit; font-size:13px; font-weight:800; cursor:pointer; white-space:nowrap; box-shadow:0 8px 20px rgba(212,83,126,.18);}
 .identity-help{margin-top:6px; font-size:11px; color:var(--sub); line-height:1.5;}
+.lang-switch-inline{display:flex;gap:8px;justify-content:flex-end;margin:10px 0 14px;}
+.lang-chip-btn{appearance:none;border:1px solid #f1c7d6;background:#fff;border-radius:999px;padding:6px 10px;font:inherit;font-size:12px;font-weight:800;color:var(--pink-mid);cursor:pointer;line-height:1;}
+.lang-chip-btn.active{background:linear-gradient(135deg,var(--pink-deep),#ff6fa8);color:#fff;border-color:transparent;box-shadow:0 8px 16px rgba(212,83,126,.18);}
 
  .weekly-shell{padding:0; display:flex; flex-direction:column; min-height:calc(100vh - var(--tab-h));}
 .weekly-note-card{display:none;}
@@ -522,14 +525,20 @@ body{
 <div class="app" id="app">
 <div class="identity-bar">
   <div class="identity-head">
-    <strong>사용자 닉네임</strong>
+    <strong id="identityTitle">사용자 닉네임</strong>
     <span class="identity-chip" id="identityChip">게스트</span>
   </div>
   <div class="identity-row">
     <input class="identity-input" id="globalNicknameInput" maxlength="16" placeholder="예: 예현 / 로지공주" type="text"/>
     <button class="identity-save" id="saveNicknameBtn" type="button">저장</button>
   </div>
-  <div class="identity-help">회원가입 없이도 이 브라우저에서는 같은 닉네임으로 결과와 로그를 이어서 볼 수 있어요.</div>
+  <div class="identity-help" id="identityHelp">회원가입 없이도 이 브라우저에서는 같은 닉네임으로 결과와 로그를 이어서 볼 수 있어요.</div>
+</div>
+<div class="lang-switch-inline" aria-label="language switch">
+  <button class="lang-chip-btn" data-lang="ko" type="button">KO</button>
+  <button class="lang-chip-btn" data-lang="en" type="button">EN</button>
+  <button class="lang-chip-btn" data-lang="ja" type="button">JP</button>
+  <button class="lang-chip-btn" data-lang="zh" type="button">CN</button>
 </div>
 
 
@@ -540,17 +549,17 @@ body{
   <div id="d-landing">
     <div class="d-landing">
       <div class="d-top">
-        <div class="eyebrow">ETU-TUDE DAILY</div>
+        <div class="eyebrow" id="dailyEyebrow">ETU-TUDE DAILY</div>
         <div class="crown">👑</div>
-        <div class="d-title">오늘의<br>에뛰튜드를<br>골라봐</div>
-        <p class="d-desc">매일 아침, 오늘의 team을 선택하고<br>나만의 무드로 하루를 시작해봐.</p>
+        <div class="d-title" id="dailyTitle">오늘의<br>에뛰튜드를<br>골라봐</div>
+        <p class="d-desc" id="dailyDesc">매일 아침, 오늘의 team을 선택하고<br>나만의 무드로 하루를 시작해봐.</p>
         <button class="btn-cta" id="goPickBtn">고르러 가기</button>
-        <p class="d-note">마음이 바뀌면 언제든 다시 고를 수 있어요 ✦</p>
+        <p class="d-note" id="dailyNote">마음이 바뀌면 언제든 다시 고를 수 있어요 ✦</p>
       </div>
       <div class="d-stats">
-        <div class="d-stat"><strong id="statTotal">0</strong><span>누적 선택</span></div>
-        <div class="d-stat"><strong id="statTeam">—</strong><span>많이 고른 팀</span></div>
-        <div class="d-stat"><strong id="statWeekly">—</strong><span>내 에뛰튜드 타입</span></div>
+        <div class="d-stat"><strong id="statTotal">0</strong><span id="statTotalLabel">누적 선택</span></div>
+        <div class="d-stat"><strong id="statTeam">—</strong><span id="statTeamLabel">많이 고른 팀</span></div>
+        <div class="d-stat"><strong id="statWeekly">—</strong><span id="statWeeklyLabel">내 에뛰튜드 타입</span></div>
       </div>
     </div>
   </div>
@@ -561,45 +570,45 @@ body{
       <div class="d-pick-header">
         <div class="btn-back" onclick="dShow('d-landing')">←</div>
         <div class="d-pick-head">
-          <strong>오늘의 team 고르기</strong>
-          <span>선택 후 미션과 제품 조합이 공개돼요</span>
+          <strong id="pickHeaderTitle">오늘의 team 고르기</strong>
+          <span id="pickHeaderSub">선택 후 미션과 제품 조합이 공개돼요</span>
         </div>
       </div>
       <div class="d-vs">
         <div class="vs-badge">PICK YOUR TEAM</div>
-        <div class="vs-title">오늘 어느 팀?</div>
-        <div class="vs-sub">선택하면 오늘의 에뛰튜드가 시작돼요</div>
+        <div class="vs-title" id="pickQuestion">오늘 어느 팀?</div>
+        <div class="vs-sub" id="pickDesc">선택하면 오늘의 에뛰튜드가 시작돼요</div>
       </div>
       <div class="d-cards">
         <div class="team-card card-warm" onclick="pickTeam('warm')">
           <div class="card-top">
             <div class="card-emoji">🌸</div>
-            <div class="card-badge">선택하기 →</div>
+            <div class="card-badge" id="warmBadge">선택하기 →</div>
           </div>
-          <div class="card-name">team 다굽자</div>
-          <div class="card-mood">따뜻하고 촉촉한 무드</div>
+          <div class="card-name" id="warmName">team 다굽자</div>
+          <div class="card-mood" id="warmMood">따뜻하고 촉촉한 무드</div>
           <div class="card-tags">
-            <span class="card-tag">#촉촉파</span>
-            <span class="card-tag">#글로우</span>
-            <span class="card-tag">#복숭아빛</span>
+            <span class="card-tag" id="warmTag1">#촉촉파</span>
+            <span class="card-tag" id="warmTag2">#글로우</span>
+            <span class="card-tag" id="warmTag3">#복숭아빛</span>
           </div>
         </div>
         <div class="vs-divider"><div class="vs-line"></div><div class="vs-circle">VS</div><div class="vs-line"></div></div>
         <div class="team-card card-cool" onclick="pickTeam('cool')">
           <div class="card-top">
             <div class="card-emoji">❄️</div>
-            <div class="card-badge">선택하기 →</div>
+            <div class="card-badge" id="coolBadge">선택하기 →</div>
           </div>
-          <div class="card-name">team 다얼자</div>
-          <div class="card-mood">차갑고 맑게 정돈된 무드</div>
+          <div class="card-name" id="coolName">team 다얼자</div>
+          <div class="card-mood" id="coolMood">차갑고 맑게 정돈된 무드</div>
           <div class="card-tags">
-            <span class="card-tag">#보송파</span>
-            <span class="card-tag">#블러</span>
-            <span class="card-tag">#쿨톤</span>
+            <span class="card-tag" id="coolTag1">#보송파</span>
+            <span class="card-tag" id="coolTag2">#블러</span>
+            <span class="card-tag" id="coolTag3">#쿨톤</span>
           </div>
         </div>
       </div>
-      <div class="d-pick-bottom"><p>오늘의 미션은 선택 후 공개됩니다.</p></div>
+      <div class="d-pick-bottom"><p id="pickBottomText">오늘의 미션은 선택 후 공개됩니다.</p></div>
     </div>
   </div>
 
@@ -610,7 +619,7 @@ body{
         <div class="d-res-header">
           <div class="d-res-back" onclick="dShow('d-landing')">←</div>
           <div class="d-res-hr">
-            <strong>오늘의 에뛰튜드</strong>
+            <strong id="dailyResultTitle">오늘의 에뛰튜드</strong>
             <span id="resDateLabel"></span>
           </div>
         </div>
@@ -624,7 +633,7 @@ body{
           </div>
         </div>
         <div class="res-section">
-          <div class="sec-lbl">오늘의 플레이리스트</div>
+          <div class="sec-lbl" id="playlistSectionLabel">오늘의 플레이리스트</div>
           <a class="playlist-card" href="https://youtu.be/Rk484kXj4QY?si=E9MTq-p1Poy6I8uk" target="_blank" rel="noopener noreferrer" id="playlistCard">
             <div class="pl-thumb warm-pl" id="plThumb">🎵</div>
             <div class="pl-info">
@@ -635,13 +644,13 @@ body{
           </a>
         </div>
         <div class="res-section" style="margin-top:12px;">
-          <div class="sec-lbl">get ready with 에뛰-캐스트</div>
+          <div class="sec-lbl" id="podcastSectionLabel">get ready with 에뛰-캐스트</div>
           <div class="podcast-card">
             <div class="podcast-top">
               <div class="podcast-icon">🎙️</div>
               <div>
-                <div class="podcast-title">에뛰-캐스트</div>
-                <div class="podcast-sub">화장하면서 같이 들어봐 ✦</div>
+                <div class="podcast-title" id="podcastTitleLabel">에뛰-캐스트</div>
+                <div class="podcast-sub" id="podcastSubLabel">화장하면서 같이 들어봐 ✦</div>
               </div>
             </div>
             <div class="podcast-embed">
@@ -650,9 +659,9 @@ body{
           </div>
         </div>
         <div class="res-section" style="margin-top:12px;">
-          <div class="sec-lbl">오늘의 룩</div>
+          <div class="sec-lbl" id="lookSectionLabel">오늘의 룩</div>
           <div class="look-card" id="lookCard" onclick="togglePanel()">
-            <div class="look-sub">제품 조합 · 탭해서 공주의 규칙 확인 →</div>
+            <div class="look-sub" id="lookSub">제품 조합 · 탭해서 공주의 규칙 확인 →</div>
             <div id="lookItems"></div>
             <div class="look-tap" id="lookTap">탭해서 공주의 규칙 확인 →</div>
           </div>
@@ -661,13 +670,13 @@ body{
       </div>
       <div class="side-panel" id="sidePanel">
         <div class="panel-hdr">
-          <span class="panel-title">👑 공주의 규칙</span>
+          <span class="panel-title" id="panelTitle">👑 공주의 규칙</span>
           <div class="panel-close" onclick="togglePanel()">✕</div>
         </div>
         <div class="comment-list" id="commentList"></div>
         <div class="input-row">
           <input class="tip-input" placeholder="나만의 팁 남기기..." id="tipInput"/>
-          <button class="send-btn" onclick="addComment()">올리기</button>
+          <button class="send-btn" id="sendTipBtn" onclick="addComment()">올리기</button>
         </div>
       </div>
     </div>
@@ -697,30 +706,30 @@ body{
 
     <!-- 데일리 누적 -->
     <div class="my-card">
-      <h3>📅 데일리 팀 기록</h3>
+      <h3 id="myDailyHistoryTitle">📅 데일리 팀 기록</h3>
       <div id="myDailyHistory" class="daily-history"></div>
       <div id="myDailyEmpty" class="empty-state hidden">
-        <p>아직 데일리 팀을 선택하지 않았어요.<br>매일 팀을 골라 무드를 쌓아보세요!</p>
-        <button class="btn-go" onclick="switchTab('tab-daily')">데일리 시작하기 →</button>
+        <p id="myDailyEmptyText">아직 데일리 팀을 선택하지 않았어요.<br>매일 팀을 골라 무드를 쌓아보세요!</p>
+        <button class="btn-go" id="myDailyEmptyBtn" onclick="switchTab('tab-daily')">데일리 시작하기 →</button>
       </div>
     </div>
 
     <!-- 4축 무드 시각화 -->
     <div class="my-card">
-      <h3>🧭 나의 누적 무드</h3>
+      <h3 id="myMoodTitle">🧭 나의 누적 무드</h3>
       <div id="myAxes" class="axis-bars"></div>
       <div id="myAxesEmpty" class="empty-state hidden">
-        <p>데이터가 쌓이면 나의 성향을 확인할 수 있어요.</p>
+        <p id="myMoodEmptyText">데이터가 쌓이면 나의 성향을 확인할 수 있어요.</p>
       </div>
     </div>
 
     <!-- 주간 테스트 결과 -->
     <div class="my-card">
-      <h3>📊 주간 테스트 결과</h3>
+      <h3 id="myWeeklyResultTitle">📊 주간 테스트 결과</h3>
       <div id="myWeeklyResult"></div>
       <div id="myWeeklyEmpty" class="empty-state hidden">
-        <p>주간 테스트를 완료하면 나의 에뛰튜드 타입을 확인할 수 있어요.</p>
-        <button class="btn-go" onclick="switchTab('tab-weekly')">테스트 하러 가기 →</button>
+        <p id="myWeeklyEmptyText">주간 테스트를 완료하면 나의 에뛰튜드 타입을 확인할 수 있어요.</p>
+        <button class="btn-go" id="myWeeklyEmptyBtn" onclick="switchTab('tab-weekly')">테스트 하러 가기 →</button>
       </div>
     </div>
 
@@ -731,15 +740,15 @@ body{
 <nav class="tabbar">
   <button class="tab-item active" id="tabBtn-daily" onclick="switchTab('tab-daily')">
     <span class="ico">📅</span>
-    <span class="lbl">데일리</span>
+    <span class="lbl" id="tabDailyLabel">데일리</span>
   </button>
   <button class="tab-item" id="tabBtn-weekly" onclick="switchTab('tab-weekly')">
     <span class="ico">🧭</span>
-    <span class="lbl">주간 테스트</span>
+    <span class="lbl" id="tabWeeklyLabel">주간 테스트</span>
   </button>
   <button class="tab-item" id="tabBtn-mypage" onclick="switchTab('tab-mypage')">
     <span class="ico">👑</span>
-    <span class="lbl">마이페이지</span>
+    <span class="lbl" id="tabMypageLabel">마이페이지</span>
   </button>
 </nav>
 
@@ -751,7 +760,41 @@ const TODAY = new Date().toISOString().slice(0,10);
 function gStore(k){try{return JSON.parse(localStorage.getItem(k));}catch{return null;}}
 function sStore(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch{}}
 
+const APP_LANG_KEY='etutude_app_lang';
 const GLOBAL_NICK_KEY='etutude_user_nickname';
+const LANG_LOCALES={ko:'ko-KR',en:'en-US',ja:'ja-JP',zh:'zh-CN'};
+let currentLang=(function(){
+  try{
+    const saved=localStorage.getItem(APP_LANG_KEY);
+    if(saved && ['ko','en','ja','zh'].includes(saved)) return saved;
+  }catch(e){}
+  return 'ko';
+})();
+
+const DAILY_I18N={
+  ko:{guest:'게스트',identityTitle:'사용자 닉네임',identityPlaceholder:'예: 예현 / 로지공주',save:'저장',identityHelp:'회원가입 없이도 이 브라우저에서는 같은 닉네임으로 결과와 로그를 이어서 볼 수 있어요.',dailyTab:'데일리',weeklyTab:'주간 테스트',mypageTab:'마이페이지',landingEyebrow:'ETU-TUDE DAILY',landingTitle:'오늘의<br>에뛰튜드를<br>골라봐',landingDesc:'매일 아침, 오늘의 team을 선택하고<br>나만의 무드로 하루를 시작해봐.',landingBtn:'고르러 가기',landingNote:'마음이 바뀌면 언제든 다시 고를 수 있어요 ✦',statTotal:'누적 선택',statTeam:'많이 고른 팀',statWeekly:'내 에뛰튜드 타입',pickTitle:'오늘의 team 고르기',pickSub:'선택 후 미션과 제품 조합이 공개돼요',pickQuestion:'오늘 어느 팀?',pickDesc:'선택하면 오늘의 에뛰튜드가 시작돼요',pickBtn:'선택하기 →',pickBottom:'오늘의 미션은 선택 후 공개됩니다.',resultTitle:'오늘의 에뛰튜드',todayTeam:'오늘의 team',playlistSection:'오늘의 플레이리스트',listen:'듣기 ↗',podcastSection:'get ready with 에뛰-캐스트',podcastTitle:'에뛰-캐스트',podcastSub:'화장하면서 같이 들어봐 ✦',lookSection:'오늘의 룩',lookSub:'제품 조합 · 탭해서 공주의 규칙 확인 →',lookTap:'탭해서 공주의 규칙 확인 →',rules:'👑 공주의 규칙',tipPlaceholder:'나만의 팁 남기기...',upload:'올리기',close:'← 닫기',dailyHistoryTitle:'📅 데일리 팀 기록',dailyEmpty:'아직 데일리 팀을 선택하지 않았어요.<br>매일 팀을 골라 무드를 쌓아보세요!',goDaily:'데일리 시작하기 →',moodTitle:'🧭 나의 누적 무드',moodEmpty:'데이터가 쌓이면 나의 성향을 확인할 수 있어요.',weeklyResultTitle:'📊 주간 테스트 결과',weeklyEmpty:'주간 테스트를 완료하면 나의 에뛰튜드 타입을 확인할 수 있어요.',goWeekly:'테스트 하러 가기 →',mySubtitleDefault:'데이터를 쌓아보세요',playCountSuffix:'번 플레이',lastTest:'마지막 테스트',teamWarmShort:'다굽자',teamCoolShort:'다얼자',axisSoft:'Soft',axisBold:'Bold',axisDewy:'Dewy',axisBlur:'Blur',axisEasy:'Easy',axisLayer:'Layer',axisDaily:'Daily',axisParty:'Party'},
+  en:{guest:'Guest',identityTitle:'Nickname',identityPlaceholder:'e.g. Yea-hyun / Rosy Princess',save:'Save',identityHelp:'Even without signing up, this browser can keep your nickname, results, and logs together.',dailyTab:'Daily',weeklyTab:'Weekly Test',mypageTab:'My Page',landingEyebrow:'ETU-TUDE DAILY',landingTitle:'Pick your<br>ETU-TUDE<br>for today',landingDesc:'Every morning, choose today’s team and<br>start your day in your own mood.',landingBtn:'Pick my team',landingNote:'You can change your mind anytime ✦',statTotal:'Total picks',statTeam:'Top team',statWeekly:'My ETU-TUDE type',pickTitle:'Choose today’s team',pickSub:'Mission and product combo will be revealed after selection.',pickQuestion:'Which team are you today?',pickDesc:'Your ETU-TUDE starts the moment you choose.',pickBtn:'Choose →',pickBottom:'Today’s mission will be revealed after your choice.',resultTitle:'Today’s ETU-TUDE',todayTeam:'Today’s team',playlistSection:'Today’s playlist',listen:'Listen ↗',podcastSection:'Get ready with ETU-CAST',podcastTitle:'ETU-CAST',podcastSub:'Play it while getting ready ✦',lookSection:'Today’s look',lookSub:'Product combo · tap to see princess rules →',lookTap:'Tap to see princess rules →',rules:'👑 Princess Rules',tipPlaceholder:'Leave your own tip...',upload:'Post',close:'← Close',dailyHistoryTitle:'📅 Daily Team History',dailyEmpty:'You have not picked a daily team yet.<br>Choose one each day and build your mood history!',goDaily:'Start Daily →',moodTitle:'🧭 My Mood Overview',moodEmpty:'Once data builds up, your tendencies will appear here.',weeklyResultTitle:'📊 Weekly Test Result',weeklyEmpty:'Complete the weekly test to see your ETU-TUDE type.',goWeekly:'Go to test →',mySubtitleDefault:'Build your data',playCountSuffix:' plays',lastTest:'Last test',teamWarmShort:'Dewy',teamCoolShort:'Blur',axisSoft:'Soft',axisBold:'Bold',axisDewy:'Dewy',axisBlur:'Blur',axisEasy:'Easy',axisLayer:'Layer',axisDaily:'Daily',axisParty:'Party'},
+  ja:{guest:'ゲスト',identityTitle:'ニックネーム',identityPlaceholder:'例: イェヒョン / ロージープリンセス',save:'保存',identityHelp:'会員登録なしでも、このブラウザでは同じニックネームで結果とログを続けて見られます。',dailyTab:'デイリー',weeklyTab:'週間テスト',mypageTab:'マイページ',landingEyebrow:'ETU-TUDE DAILY',landingTitle:'今日の<br>ETU-TUDEを<br>選んでみて',landingDesc:'毎朝、今日の team を選んで<br>自分だけのムードで一日を始めよう。',landingBtn:'選びに行く',landingNote:'気分が変わったらいつでも選び直せます ✦',statTotal:'累計選択',statTeam:'よく選ぶチーム',statWeekly:'私のタイプ',pickTitle:'今日の team を選ぶ',pickSub:'選択するとミッションと商品組み合わせが公開されます。',pickQuestion:'今日はどのチーム？',pickDesc:'選んだ瞬間、今日の ETU-TUDE が始まります。',pickBtn:'選択 →',pickBottom:'今日のミッションは選択後に公開されます。',resultTitle:'今日の ETU-TUDE',todayTeam:'今日の team',playlistSection:'今日のプレイリスト',listen:'聴く ↗',podcastSection:'ETU-CAST と一緒に準備',podcastTitle:'ETU-CAST',podcastSub:'メイクしながら聞いてみて ✦',lookSection:'今日のルック',lookSub:'商品組み合わせ · タップしてプリンセスルールを見る →',lookTap:'タップしてプリンセスルールを見る →',rules:'👑 プリンセスルール',tipPlaceholder:'自分だけのコツを書く...',upload:'投稿',close:'← 閉じる',dailyHistoryTitle:'📅 デイリーチーム記録',dailyEmpty:'まだデイリーチームを選んでいません。<br>毎日チームを選んでムードを積み重ねてみましょう！',goDaily:'デイリーを始める →',moodTitle:'🧭 私の累積ムード',moodEmpty:'データがたまると傾向が確認できます。',weeklyResultTitle:'📊 週間テスト結果',weeklyEmpty:'週間テストを完了すると自分の ETU-TUDE タイプを確認できます。',goWeekly:'テストへ →',mySubtitleDefault:'データをためてみましょう',playCountSuffix:'回プレイ',lastTest:'最後のテスト',teamWarmShort:'ツヤ',teamCoolShort:'ブラー',axisSoft:'Soft',axisBold:'Bold',axisDewy:'Dewy',axisBlur:'Blur',axisEasy:'Easy',axisLayer:'Layer',axisDaily:'Daily',axisParty:'Party'},
+  zh:{guest:'访客',identityTitle:'昵称',identityPlaceholder:'例如：Ye-hyun / Rosy Princess',save:'保存',identityHelp:'即使不注册会员，这个浏览器里也可以继续保留你的昵称、结果和记录。',dailyTab:'每日',weeklyTab:'每周测试',mypageTab:'我的页面',landingEyebrow:'ETU-TUDE DAILY',landingTitle:'选出今天的<br>ETU-TUDE',landingDesc:'每天早上，选择今天的 team，<br>用属于自己的 mood 开始一天。',landingBtn:'去选择',landingNote:'心情变了也可以随时重新选择 ✦',statTotal:'累计选择',statTeam:'最常选择的团队',statWeekly:'我的类型',pickTitle:'选择今天的 team',pickSub:'选择后将公开今日任务和产品组合。',pickQuestion:'今天你是哪一队？',pickDesc:'选中的瞬间，今天的 ETU-TUDE 就开始了。',pickBtn:'选择 →',pickBottom:'今天的任务会在选择后公开。',resultTitle:'今天的 ETU-TUDE',todayTeam:'今天的 team',playlistSection:'今日歌单',listen:'去听 ↗',podcastSection:'和 ETU-CAST 一起准备',podcastTitle:'ETU-CAST',podcastSub:'边化妆边听吧 ✦',lookSection:'今日妆容',lookSub:'产品组合 · 点击查看公主规则 →',lookTap:'点击查看公主规则 →',rules:'👑 公主规则',tipPlaceholder:'留下你的专属小技巧...',upload:'发布',close:'← 关闭',dailyHistoryTitle:'📅 每日团队记录',dailyEmpty:'你还没有选择过每日 team。<br>每天选一个，把自己的 mood 慢慢积累起来吧！',goDaily:'开始每日 →',moodTitle:'🧭 我的累计 mood',moodEmpty:'数据累积后，就能看到你的倾向。',weeklyResultTitle:'📊 每周测试结果',weeklyEmpty:'完成每周测试后就能看到你的 ETU-TUDE 类型。',goWeekly:'去测试 →',mySubtitleDefault:'先把数据积累起来吧',playCountSuffix:'次体验',lastTest:'最后测试',teamWarmShort:'水光',teamCoolShort:'柔焦',axisSoft:'Soft',axisBold:'Bold',axisDewy:'Dewy',axisBlur:'Blur',axisEasy:'Easy',axisLayer:'Layer',axisDaily:'Daily',axisParty:'Party'}
+};
+
+const TEAM_I18N={
+  warm:{
+    ko:{name:'team 다굽자',mood:'따뜻하고 촉촉한 무드',mission:'립세럼 두 번 덧바르기',products:['진저슈가 립세럼','디어달링 워터틴트 #04','컬픽스 마스카라'],playlist:'team 다굽자 playlist',artists:'IU · NewJeans · AKMU',tags:['#촉촉파','#글로우','#복숭아빛'],comments:[{a:'✦',n:'@glow_yuna',t:'누드도 핑크도 라벤더도 다 좋다 결국 다굽자가 진리'},{a:'✿',n:'@hazel_k',t:'워터틴트 04번이랑 립세럼 레이어링하면 진짜 과즙터짐'},{a:'♡',n:'@minari_b',t:'오늘 에뛰드 다굽자팀 나임 🍞'},{a:'✧',n:'@seo_daily',t:'마스카라 먼저, 틴트 나중 순서가 제일 안번짐! 버스에서도 완성됨'},{a:'★',n:'@jini_look',t:'립세럼 먼저 바르고 10초 기다렸다가 틴트 올리면 훨씬 오래 가요'}]},
+    en:{name:'team Dewy',mood:'warm and juicy glow mood',mission:'Layer lip serum twice',products:['Ginger Sugar Lip Serum','Dear Darling Water Tint #04','Curl Fix Mascara'],playlist:'team Dewy playlist',artists:'IU · NewJeans · AKMU',tags:['#dewyteam','#glow','#peachy'],comments:[{a:'✦',n:'@glow_yuna',t:'Nude, pink, lavender... they all work, but team Dewy always wins.'},{a:'✿',n:'@hazel_k',t:'Tint #04 layered over lip serum gives the juiciest finish.'},{a:'♡',n:'@minari_b',t:'Today I’m fully on team Dewy 🍞'},{a:'✧',n:'@seo_daily',t:'Mascara first, tint second — the cleanest order even on the bus.'},{a:'★',n:'@jini_look',t:'Wait 10 seconds after lip serum and the tint lasts much longer.'}]},
+    ja:{name:'team ツヤ',mood:'あたたかくてみずみずしいムード',mission:'リップセラムを2回重ねる',products:['ジンジャーシュガー リップセラム','ディアダーリン ウォーターティント #04','カールフィックス マスカラ'],playlist:'team ツヤ playlist',artists:'IU · NewJeans · AKMU',tags:['#ツヤ派','#グロウ','#ピーチカラー'],comments:[{a:'✦',n:'@glow_yuna',t:'ヌードもピンクもラベンダーもいいけど、やっぱり team ツヤ が正解。'},{a:'✿',n:'@hazel_k',t:'ウォーターティント 04 とリップセラムの重ね塗りが本当にジューシー。'},{a:'♡',n:'@minari_b',t:'今日は完全に team ツヤ な気分 🍞'},{a:'✧',n:'@seo_daily',t:'マスカラ先、ティント後の順番がいちばんにじみにくい！'},{a:'★',n:'@jini_look',t:'リップセラムのあと10秒待つとティントの持ちがぐっと良くなる。'}]},
+    zh:{name:'team 水光',mood:'温暖又水润的氛围',mission:'唇部精华叠涂两次',products:['姜糖润唇精华','Dear Darling 水感染唇液 #04','睫毛定型卷翘睫毛膏'],playlist:'team 水光 playlist',artists:'IU · NewJeans · AKMU',tags:['#水光派','#glow','#蜜桃感'],comments:[{a:'✦',n:'@glow_yuna',t:'裸色、粉色、薰衣草都很好看，但最后还是 team 水光 最稳。'},{a:'✿',n:'@hazel_k',t:'04 号唇液叠在唇部精华上，果汁感真的会爆出来。'},{a:'♡',n:'@minari_b',t:'今天我就是 team 水光 🍞'},{a:'✧',n:'@seo_daily',t:'先刷睫毛再涂唇，最不容易糊，通勤路上也能完成。'},{a:'★',n:'@jini_look',t:'唇部精华后等 10 秒再上唇液，持久度会好很多。'}]}
+  },
+  cool:{
+    ko:{name:'team 다얼자',mood:'차갑고 맑게 정돈된 무드',mission:'블러 처리하듯 퍼프 톡톡 마무리하기',products:['더블래스팅 아티스트 컨실러','마이 쁘띠 팔레트','컬픽스 마스카라'],playlist:'team 다얼자 playlist',artists:'aespa · 이하이 · 볼빨간사춘기',tags:['#보송파','#블러','#쿨톤'],comments:[{a:'✦',n:'@blur_soy',t:'다얼자 무드는 결 정리가 핵심. 퍼프 꼭 쓰기'},{a:'✿',n:'@ice_jiyeon',t:'쿨톤 언더톤이라 다얼자가 훨씬 잘 맞음 ❄️'},{a:'♡',n:'@pale_haru',t:'컨실러로 눈밑만 살살 정리해도 분위기 달라짐'},{a:'✧',n:'@e_hana',t:'팔레트 중간 컬러 넓게 펴서 음영 살짝만 — 이게 다얼자 룩의 전부'}]},
+    en:{name:'team Blur',mood:'cool, clean, softly blurred mood',mission:'Finish with light puff taps like a blur filter',products:['Double Lasting Artist Concealer','My Little Nut Palette','Curl Fix Mascara'],playlist:'team Blur playlist',artists:'aespa · LeeHi · Bolbbalgan4',tags:['#blurteam','#softmatte','#cooltone'],comments:[{a:'✦',n:'@blur_soy',t:'For team Blur, texture control is everything. Always use a puff.'},{a:'✿',n:'@ice_jiyeon',t:'I’m cool-undertoned, so team Blur fits me much better ❄️'},{a:'♡',n:'@pale_haru',t:'Just tidying under the eyes with concealer changes the whole mood.'},{a:'✧',n:'@e_hana',t:'Sweep the middle palette shade widely and keep the contour subtle — that’s the whole look.'}]},
+    ja:{name:'team ブラー',mood:'ひんやり澄んで整ったムード',mission:'ブラーをかけるようにパフで軽く仕上げる',products:['ダブルラスティング アーティスト コンシーラー','マイプチパレット','カールフィックス マスカラ'],playlist:'team ブラー playlist',artists:'aespa · LeeHi · Bolbbalgan4',tags:['#ブラー派','#ソフトマット','#クールトーン'],comments:[{a:'✦',n:'@blur_soy',t:'team ブラー は肌のキメ整理が大事。パフは必須。'},{a:'✿',n:'@ice_jiyeon',t:'クールトーンのアンダーだから team ブラー のほうがずっと似合う ❄️'},{a:'♡',n:'@pale_haru',t:'コンシーラーで目の下だけ整えても雰囲気が変わる。'},{a:'✧',n:'@e_hana',t:'パレットの中間色を広めにのせて、陰影を少しだけ。これが team ブラー ルック。'}]},
+    zh:{name:'team 柔焦',mood:'冷静清透、轮廓利落的氛围',mission:'像开了柔焦滤镜一样，用粉扑轻轻拍完妆',products:['Double Lasting 艺术遮瑕盘','My Petit 多功能眼影盘','睫毛定型卷翘睫毛膏'],playlist:'team 柔焦 playlist',artists:'aespa · LeeHi · Bolbbalgan4',tags:['#柔焦派','#softmatte','#冷调'],comments:[{a:'✦',n:'@blur_soy',t:'team 柔焦 的关键就是整理肤质纹理，粉扑一定要用。'},{a:'✿',n:'@ice_jiyeon',t:'我是冷调底色，所以 team 柔焦 更适合我 ❄️'},{a:'♡',n:'@pale_haru',t:'只把眼下用遮瑕稍微整理一下，氛围就会完全不同。'},{a:'✧',n:'@e_hana',t:'把盘里中间色大面积铺开，只留一点点阴影，这就是 team 柔焦 的全部。'}]}
+  }
+};
+
+function tr(){ return DAILY_I18N[currentLang] || DAILY_I18N.ko; }
+function getTeamCopy(teamKey){ const team=TEAM_I18N[teamKey] || TEAM_I18N.warm; return team[currentLang] || team.ko; }
 function sanitizeSharedNickname(value){ return String(value || '').replace(/\s+/g,' ').trim().slice(0,16); }
 function getSharedNickname(){
   try{
@@ -762,7 +805,16 @@ function getSharedNickname(){
   }catch(e){}
   return '';
 }
-function getDisplayNickname(){ return getSharedNickname() || '게스트'; }
+function getDisplayNickname(){ return getSharedNickname() || tr().guest; }
+function getMyTitleText(name){
+  return ({ko:`${name}님의 에뛰튜드`,en:`${name}'s ETU-TUDE`,ja:`${name}の ETU-TUDE`,zh:`${name} 的 ETU-TUDE`})[currentLang] || `${name}'s ETU-TUDE`;
+}
+function getPlayCountLabel(count){
+  return currentLang==='ko' ? `${count}${tr().playCountSuffix}` : `${count}${tr().playCountSuffix}`;
+}
+function setText(id, value){ const el=document.getElementById(id); if(el) el.textContent=value; }
+function setHTML(id, value){ const el=document.getElementById(id); if(el) el.innerHTML=value; }
+function setPlaceholder(id, value){ const el=document.getElementById(id); if(el) el.placeholder=value; }
 function renderGlobalNickname(){
   const input = document.getElementById('globalNicknameInput');
   const chip = document.getElementById('identityChip');
@@ -770,11 +822,90 @@ function renderGlobalNickname(){
   const name = getDisplayNickname();
   if(input && document.activeElement !== input){ input.value = getSharedNickname(); }
   if(chip) chip.textContent = name;
-  if(title) title.textContent = `${name}님의 에뛰튜드`;
+  if(title) title.textContent = getMyTitleText(name);
 }
 function syncWeeklyFrameNickname(){
   const frame = document.getElementById('weeklyPixelFrame');
   try{ if(frame && frame.contentWindow && typeof frame.contentWindow.syncNicknameFromShared === 'function'){ frame.contentWindow.syncNicknameFromShared(); } }catch(e){}
+}
+function syncWeeklyFrameLanguage(){
+  const frame = document.getElementById('weeklyPixelFrame');
+  try{ if(frame && frame.contentWindow && typeof frame.contentWindow.setLanguage === 'function'){ frame.contentWindow.setLanguage(currentLang); } }catch(e){}
+}
+function updateLangButtons(){
+  document.querySelectorAll('.lang-chip-btn').forEach(btn=>btn.classList.toggle('active', btn.dataset.lang===currentLang));
+}
+function applyDailyI18n(){
+  const c = tr();
+  document.documentElement.lang = ({ko:'ko',en:'en',ja:'ja',zh:'zh-CN'})[currentLang] || 'ko';
+  document.title = ({ko:'ETU-TUDE | 나의 에뛰튜드 찾기',en:'ETU-TUDE | Find My ETU-TUDE',ja:'ETU-TUDE | 私の ETU-TUDE を見つける',zh:'ETU-TUDE | 找到我的 ETU-TUDE'})[currentLang] || 'ETU-TUDE | Find My ETU-TUDE';
+  setText('identityTitle', c.identityTitle);
+  setPlaceholder('globalNicknameInput', c.identityPlaceholder);
+  setText('saveNicknameBtn', c.save);
+  setText('identityHelp', c.identityHelp);
+  setText('dailyEyebrow', c.landingEyebrow);
+  setHTML('dailyTitle', c.landingTitle);
+  setHTML('dailyDesc', c.landingDesc);
+  setText('goPickBtn', c.landingBtn);
+  setText('dailyNote', c.landingNote);
+  setText('statTotalLabel', c.statTotal);
+  setText('statTeamLabel', c.statTeam);
+  setText('statWeeklyLabel', c.statWeekly);
+  setText('pickHeaderTitle', c.pickTitle);
+  setText('pickHeaderSub', c.pickSub);
+  setText('pickQuestion', c.pickQuestion);
+  setText('pickDesc', c.pickDesc);
+  setText('pickBottomText', c.pickBottom);
+  const warm = getTeamCopy('warm');
+  const cool = getTeamCopy('cool');
+  setText('warmBadge', c.pickBtn); setText('coolBadge', c.pickBtn);
+  setText('warmName', warm.name); setText('coolName', cool.name);
+  setText('warmMood', warm.mood); setText('coolMood', cool.mood);
+  ['warm','cool'].forEach(key=>{
+    const team = key==='warm'?warm:cool;
+    team.tags.forEach((tag, idx)=>setText(`${key}Tag${idx+1}`, tag));
+  });
+  setText('dailyResultTitle', c.resultTitle);
+  setText('resBadge', c.todayTeam);
+  setText('playlistSectionLabel', c.playlistSection);
+  setText('plLink', c.listen);
+  setText('podcastSectionLabel', c.podcastSection);
+  setText('podcastTitleLabel', c.podcastTitle);
+  setText('podcastSubLabel', c.podcastSub);
+  const podcastFrame = document.getElementById('dailyPodcastIframe'); if(podcastFrame) podcastFrame.title = c.podcastTitle;
+  setText('lookSectionLabel', c.lookSection);
+  setText('lookSub', c.lookSub);
+  setText('lookTap', panelOpen ? c.close : c.lookTap);
+  setText('panelTitle', c.rules);
+  setPlaceholder('tipInput', c.tipPlaceholder);
+  setText('sendTipBtn', c.upload);
+  setText('myDailyHistoryTitle', c.dailyHistoryTitle);
+  setHTML('myDailyEmptyText', c.dailyEmpty);
+  setText('myDailyEmptyBtn', c.goDaily);
+  setText('myMoodTitle', c.moodTitle);
+  setText('myMoodEmptyText', c.moodEmpty);
+  setText('myWeeklyResultTitle', c.weeklyResultTitle);
+  setText('myWeeklyEmptyText', c.weeklyEmpty);
+  setText('myWeeklyEmptyBtn', c.goWeekly);
+  setText('tabDailyLabel', c.dailyTab);
+  setText('tabWeeklyLabel', c.weeklyTab);
+  setText('tabMypageLabel', c.mypageTab);
+  updateLangButtons();
+  renderGlobalNickname();
+  syncWeeklyFrameLanguage();
+}
+function setAppLanguage(lang){
+  if(!DAILY_I18N[lang]) return;
+  currentLang = lang;
+  try{ localStorage.setItem(APP_LANG_KEY, lang); }catch(e){}
+  applyDailyI18n();
+  const daily = gStore('etutude_daily');
+  if(document.getElementById('d-result') && !document.getElementById('d-result').classList.contains('hidden') && daily && daily.team){
+    renderDailyResult(daily.team);
+  } else {
+    initDailyLanding(false);
+  }
+  if(document.getElementById('tab-mypage') && document.getElementById('tab-mypage').classList.contains('active')) renderMypage();
 }
 function saveGlobalNickname(){
   const input = document.getElementById('globalNicknameInput');
@@ -803,41 +934,17 @@ function switchTab(id){
   if(btn) btn.classList.add('active');
   if(id==='tab-mypage') renderMypage();
   if(id==='tab-daily') initDailyLanding();
-  if(id==='tab-weekly'){ initWeeklyLanding(); syncWeeklyFrameNickname(); }
+  if(id==='tab-weekly'){ initWeeklyLanding(); syncWeeklyFrameLanguage(); syncWeeklyFrameNickname(); }
 }
 
 /* ══════════════════════════════
    데일리 로직
 ══════════════════════════════ */
 const TEAMS = {
-  warm:{
-    name:'team 다굽자',mood:'따뜻하고 촉촉한 무드',mission:'립세럼 두 번 덧바르기',
-    products:['진저슈가 립세럼','디어달링 워터틴트 #04','컬픽스 마스카라'],
-    playlist:'team 다굽자 playlist',artists:'IU · NewJeans · AKMU',
-    plHref:'https://youtu.be/Rk484kXj4QY?si=E9MTq-p1Poy6I8uk',
-    thumbCls:'warm-pl',linkCls:'warm-link',heroCls:'res-hero-warm',
-    comments:[
-      {a:'✦',n:'@glow_yuna',t:'누드도 핑크도 라벤더도 다 좋다 결국 다굽자가 진리'},
-      {a:'✿',n:'@hazel_k',t:'워터틴트 04번이랑 립세럼 레이어링하면 진짜 과즙터짐'},
-      {a:'♡',n:'@minari_b',t:'오늘 에뛰드 다굽자팀 나임 🍞'},
-      {a:'✧',n:'@seo_daily',t:'마스카라 먼저, 틴트 나중 순서가 제일 안번짐! 버스에서도 완성됨'},
-      {a:'★',n:'@jini_look',t:'립세럼 먼저 바르고 10초 기다렸다가 틴트 올리면 훨씬 오래 가요'},
-    ]
-  },
-  cool:{
-    name:'team 다얼자',mood:'차갑고 맑게 정돈된 무드',mission:'블러 처리하듯 퍼프 톡톡 마무리하기',
-    products:['더블래스팅 아티스트 컨실러','마이 쁘띠 팔레트','컬픽스 마스카라'],
-    playlist:'team 다얼자 playlist',artists:'aespa · 이하이 · 볼빨간사춘기',
-    plHref:'https://youtu.be/Rk484kXj4QY?si=E9MTq-p1Poy6I8uk',
-    thumbCls:'cool-pl',linkCls:'cool-link',heroCls:'res-hero-cool',
-    comments:[
-      {a:'✦',n:'@blur_soy',t:'다얼자 무드는 결 정리가 핵심. 퍼프 꼭 쓰기'},
-      {a:'✿',n:'@ice_jiyeon',t:'쿨톤 언더톤이라 다얼자가 훨씬 잘 맞음 ❄️'},
-      {a:'♡',n:'@pale_haru',t:'컨실러로 눈밑만 살살 정리해도 분위기 달라짐'},
-      {a:'✧',n:'@e_hana',t:'팔레트 중간 컬러 넓게 펴서 음영 살짝만 — 이게 다얼자 룩의 전부'},
-    ]
-  }
+  warm:{plHref:'https://youtu.be/Rk484kXj4QY?si=E9MTq-p1Poy6I8uk',thumbCls:'warm-pl',linkCls:'warm-link',heroCls:'res-hero-warm'},
+  cool:{plHref:'https://youtu.be/Rk484kXj4QY?si=E9MTq-p1Poy6I8uk',thumbCls:'cool-pl',linkCls:'cool-link',heroCls:'res-hero-cool'}
 };
+function getTeamData(teamKey){ return {...(TEAMS[teamKey]||{}), ...(getTeamCopy(teamKey)||{})}; }
 
 function saveDailyChoice(team){
   const d = gStore('etutude_daily')||{};
@@ -853,16 +960,17 @@ function getDailyStats(){
   if(!d) return {total:0,fav:'—',counts:{warm:0,cool:0},history:[]};
   const h=d.history||[];
   const c=d.counts||{warm:0,cool:0};
-  const fav=c.warm>(c.cool||0)?'다굽자':c.cool>(c.warm||0)?'다얼자':'—';
+  const fav=c.warm>(c.cool||0)?tr().teamWarmShort:c.cool>(c.warm||0)?tr().teamCoolShort:'—';
   return{total:h.length,fav,counts:c,history:h};
 }
 
 function initDailyLanding(showLanding=true){
+  applyDailyI18n();
   const st=getDailyStats();
   document.getElementById('statTotal').textContent=st.total||0;
   document.getElementById('statTeam').textContent=st.fav;
   const wr=gStore('etutude_weekly_result');
-  document.getElementById('statWeekly').textContent=wr?wr.title.split(' ').slice(-1)[0]:'—';
+  document.getElementById('statWeekly').textContent=wr?wr.title:'—';
   if(showLanding) dShow('d-landing');
 }
 
@@ -929,7 +1037,7 @@ async function saveMergedResult(payload){
 }
 
 function saveDailyLog(teamKey){
-  const t = TEAMS[teamKey];
+  const t = getTeamData(teamKey);
   if(!t) return;
   saveMergedResult({
     sessionId:getOrCreateSessionId(),
@@ -939,7 +1047,7 @@ function saveDailyLog(teamKey){
     pcts:{},
     scores:{dailyChoice:teamKey},
     answers:[],
-    lang:'ko',
+    lang:currentLang,
     source:'merged-daily',
     nickname:getDisplayNickname(),
     createdAt:new Date().toISOString()
@@ -955,7 +1063,7 @@ function saveWeeklyLog(resultKey, profile, pcts, scores){
     pcts:pcts,
     scores:scores,
     answers:[],
-    lang:'ko',
+    lang:currentLang,
     source:'merged-weekly',
     nickname:getDisplayNickname(),
     createdAt:new Date().toISOString()
@@ -963,14 +1071,15 @@ function saveWeeklyLog(resultKey, profile, pcts, scores){
 }
 
 function renderDailyResult(teamKey){
-  const t=TEAMS[teamKey];
+  const t=getTeamData(teamKey);
+  const c=tr();
   const hero=document.getElementById('resHero');
   hero.className='res-hero '+t.heroCls;
   document.getElementById('resTeamName').textContent=t.name;
   document.getElementById('resMood').textContent=t.mood;
   document.getElementById('resMission').textContent=t.mission;
   const opts={month:'long',day:'numeric',weekday:'short'};
-  document.getElementById('resDateLabel').textContent=new Date().toLocaleDateString('ko-KR',opts);
+  document.getElementById('resDateLabel').textContent=new Date().toLocaleDateString(LANG_LOCALES[currentLang] || 'ko-KR',opts);
   const plCard=document.getElementById('playlistCard');
   plCard.href=t.plHref;
   document.getElementById('plThumb').className='pl-thumb '+t.thumbCls;
@@ -978,17 +1087,18 @@ function renderDailyResult(teamKey){
   document.getElementById('plName').textContent=t.playlist;
   document.getElementById('plMeta').textContent=t.artists;
   document.getElementById('plLink').className='pl-link '+t.linkCls;
+  document.getElementById('plLink').textContent=c.listen;
   const lookEl=document.getElementById('lookItems');
   lookEl.innerHTML=t.products.map(p=>`<div class="look-item">${p}</div>`).join('');
   startDailyPodcast();
   const list=document.getElementById('commentList');
   list.innerHTML='';
-  t.comments.forEach(c=>{list.appendChild(makeComment(c.a,c.n,c.t));});
+  t.comments.forEach(cmt=>{list.appendChild(makeComment(cmt.a,cmt.n,cmt.t));});
   panelOpen=false;
   document.getElementById('sidePanel').classList.remove('open');
   document.getElementById('mainCol').classList.remove('panel-open');
   document.getElementById('lookCard').classList.remove('panel-on');
-  document.getElementById('lookTap').textContent='탭해서 공주의 규칙 확인 →';
+  document.getElementById('lookTap').textContent=c.lookTap;
 }
 
 function makeComment(av,name,text){
@@ -1002,13 +1112,13 @@ function togglePanel(){
   document.getElementById('sidePanel').classList.toggle('open',panelOpen);
   document.getElementById('mainCol').classList.toggle('panel-open',panelOpen);
   document.getElementById('lookCard').classList.toggle('panel-on',panelOpen);
-  document.getElementById('lookTap').textContent=panelOpen?'← 닫기':'탭해서 공주의 규칙 확인 →';
+  document.getElementById('lookTap').textContent=panelOpen?tr().close:tr().lookTap;
 }
 
 function addComment(){
   const inp=document.getElementById('tipInput');
   const txt=inp.value.trim();if(!txt)return;
-  document.getElementById('commentList').appendChild(makeComment('나','@나',txt));
+  document.getElementById('commentList').appendChild(makeComment('✦',getDisplayNickname(),txt));
   inp.value='';
   document.getElementById('commentList').scrollTop=99999;
 }
@@ -1071,6 +1181,7 @@ const typeVectors={
 let wCurrent=0,wScores={soft:0,bold:0,dewy:0,blur:0,easy:0,layer:0,daily:0,party:0};
 
 function initWeeklyLanding(){
+  syncWeeklyFrameLanguage();
   syncWeeklyFrameNickname();
 }
 
@@ -1165,9 +1276,9 @@ function renderMypage(){
   const sub=[];
   const nick = getDisplayNickname();
   if(nick && nick !== '게스트') sub.push(nick);
-  if(ds.total>0) sub.push(`${ds.total}번 플레이`);
+  if(ds.total>0) sub.push(getPlayCountLabel(ds.total));
   if(wr) sub.push(wr.title);
-  document.getElementById('mySubtitle').textContent=sub.length?sub.join(' · '):'데이터를 쌓아보세요';
+  document.getElementById('mySubtitle').textContent=sub.length?sub.join(' · '):tr().mySubtitleDefault;
 
   // 데일리 히스토리 (최근 20개)
   const histEl=document.getElementById('myDailyHistory');
@@ -1181,7 +1292,7 @@ function renderMypage(){
     h.forEach(item=>{
       const chip=document.createElement('div');
       const d=new Date(item.date);
-      const label=`${d.getMonth()+1}/${d.getDate()} ${item.team==='warm'?'다굽자':'다얼자'}`;
+      const label=`${new Date(item.date).toLocaleDateString(LANG_LOCALES[currentLang] || 'ko-KR',{month:'numeric',day:'numeric'})} ${item.team==='warm'?tr().teamWarmShort:tr().teamCoolShort}`;
       chip.className='day-chip '+(item.team==='warm'?'day-warm':'day-cool');
       chip.textContent=label;
       histEl.appendChild(chip);
@@ -1199,19 +1310,19 @@ function renderMypage(){
     const p=wr.pcts;
     const dewySway=totalChoices>0?Math.round((ds.counts.warm/totalChoices)*100):p.dewy;
     axisData=[
-      {lbl:'Soft',a:'Soft',b:'Bold',aPct:p.soft,aClsL:'a-lbl',bClsL:'b-lbl'},
-      {lbl:'Dewy',a:'Dewy',b:'Blur',aPct:Math.round((p.dewy+dewySway)/2),aClsL:'warm-lbl',bClsL:'cool-lbl'},
-      {lbl:'Easy',a:'Easy',b:'Layer',aPct:p.easy,aClsL:'a-lbl',bClsL:'b-lbl'},
-      {lbl:'Daily',a:'Daily',b:'Party',aPct:p.daily,aClsL:'a-lbl',bClsL:'b-lbl'},
+      {lbl:tr().axisSoft,a:tr().axisSoft,b:tr().axisBold,aPct:p.soft,aClsL:'a-lbl',bClsL:'b-lbl'},
+      {lbl:tr().axisDewy,a:tr().axisDewy,b:tr().axisBlur,aPct:Math.round((p.dewy+dewySway)/2),aClsL:'warm-lbl',bClsL:'cool-lbl'},
+      {lbl:tr().axisEasy,a:tr().axisEasy,b:tr().axisLayer,aPct:p.easy,aClsL:'a-lbl',bClsL:'b-lbl'},
+      {lbl:tr().axisDaily,a:tr().axisDaily,b:tr().axisParty,aPct:p.daily,aClsL:'a-lbl',bClsL:'b-lbl'},
     ];
   } else if(totalChoices>0){
     // 데일리만 있을 때
     const dewySway=Math.round((ds.counts.warm/totalChoices)*100);
     axisData=[
-      {lbl:'Soft',a:'Soft',b:'Bold',aPct:60,aClsL:'a-lbl',bClsL:'b-lbl'},
-      {lbl:'Dewy',a:'Dewy',b:'Blur',aPct:dewySway,aClsL:'warm-lbl',bClsL:'cool-lbl'},
-      {lbl:'Easy',a:'Easy',b:'Layer',aPct:55,aClsL:'a-lbl',bClsL:'b-lbl'},
-      {lbl:'Daily',a:'Daily',b:'Party',aPct:65,aClsL:'a-lbl',bClsL:'b-lbl'},
+      {lbl:tr().axisSoft,a:tr().axisSoft,b:tr().axisBold,aPct:60,aClsL:'a-lbl',bClsL:'b-lbl'},
+      {lbl:tr().axisDewy,a:tr().axisDewy,b:tr().axisBlur,aPct:dewySway,aClsL:'warm-lbl',bClsL:'cool-lbl'},
+      {lbl:tr().axisEasy,a:tr().axisEasy,b:tr().axisLayer,aPct:55,aClsL:'a-lbl',bClsL:'b-lbl'},
+      {lbl:tr().axisDaily,a:tr().axisDaily,b:tr().axisParty,aPct:65,aClsL:'a-lbl',bClsL:'b-lbl'},
     ];
   }
   if(!axisData){
@@ -1248,7 +1359,7 @@ function renderMypage(){
         <div class="ws-title">${wr.title}</div>
         <div class="ws-sub">${wr.sub}</div>
         <div class="ws-tags">${(wr.tags||[]).map(t=>`<span class="ws-tag">${t}</span>`).join('')}</div>
-        <div style="margin-top:10px;font-size:10px;color:var(--sub);">마지막 테스트: ${d.getMonth()+1}/${d.getDate()}</div>
+        <div style="margin-top:10px;font-size:10px;color:var(--sub);">${tr().lastTest}: ${new Date(wr.date).toLocaleDateString(LANG_LOCALES[currentLang] || 'ko-KR',{month:'numeric',day:'numeric'})}</div>
       </div>`;
   }
 }
@@ -1261,6 +1372,10 @@ if(globalNicknameInput){
   globalNicknameInput.addEventListener('change', saveGlobalNickname);
   globalNicknameInput.addEventListener('keydown', (e)=>{ if(e.key==='Enter'){ e.preventDefault(); saveGlobalNickname(); }});
 }
+document.querySelectorAll('.lang-chip-btn').forEach(btn=>btn.addEventListener('click', ()=>setAppLanguage(btn.dataset.lang)));
+const weeklyFrame=document.getElementById('weeklyPixelFrame');
+if(weeklyFrame){ weeklyFrame.addEventListener('load', ()=>{ syncWeeklyFrameLanguage(); syncWeeklyFrameNickname(); }); }
+applyDailyI18n();
 renderGlobalNickname();
 initDailyLanding();
 initWeeklyLanding();
