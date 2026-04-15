@@ -51,9 +51,27 @@ body{
 .identity-input::placeholder{color:#b08a99;}
 .identity-save{border:none; border-radius:12px; background:linear-gradient(135deg,var(--pink-deep),#ff6fa8); color:#fff; padding:12px 14px; font:inherit; font-size:13px; font-weight:800; cursor:pointer; white-space:nowrap; box-shadow:0 8px 20px rgba(212,83,126,.18);}
 .identity-help{margin-top:6px; font-size:11px; color:var(--sub); line-height:1.5;}
-.lang-switch-inline{display:flex;gap:8px;justify-content:flex-end;margin:10px 20px 14px 0;}
-.lang-chip-btn{appearance:none;border:1px solid #f1c7d6;background:#fff;border-radius:999px;padding:6px 10px;font:inherit;font-size:12px;font-weight:800;color:var(--pink-mid);cursor:pointer;line-height:1;}
-.lang-chip-btn.active{background:linear-gradient(135deg,var(--pink-deep),#ff6fa8);color:#fff;border-color:transparent;box-shadow:0 8px 16px rgba(212,83,126,.18);}
+.lang-switch{display:flex;justify-content:flex-end;margin:10px 0 14px;}
+.lang-box{
+  display:inline-flex;gap:6px;padding:4px;
+  background:
+    linear-gradient(180deg,rgba(255,255,255,.96),rgba(255,240,246,.96)),
+    repeating-linear-gradient(0deg,rgba(255,157,193,.12) 0 1px,transparent 1px 10px),
+    repeating-linear-gradient(90deg,rgba(255,157,193,.12) 0 1px,transparent 1px 10px);
+  border:3px solid #4b3640;border-radius:8px;
+  box-shadow:4px 4px 0 rgba(62,45,54,.16);
+}
+.lang-btn{
+  appearance:none;border:3px solid #4b3640;border-radius:6px;
+  background:#fff;color:var(--sub);padding:8px 12px;
+  font:inherit;font-size:12px;font-weight:800;line-height:1;cursor:pointer;
+  box-shadow:3px 3px 0 rgba(62,45,54,.12);
+}
+.lang-btn.active{
+  background:linear-gradient(90deg,#ff5f9a,#ff8fbc);
+  color:#fff;
+}
+.lang-btn:active{transform:translate(2px,2px);box-shadow:none;}
 
  .weekly-shell{padding:0; display:flex; flex-direction:column; min-height:calc(100vh - var(--tab-h));}
 .weekly-note-card{display:none;}
@@ -534,11 +552,13 @@ body{
   </div>
   <div class="identity-help" id="identityHelp">회원가입 없이도 이 브라우저에서는 같은 닉네임으로 결과와 로그를 이어서 볼 수 있어요.</div>
 </div>
-<div class="lang-switch-inline" aria-label="language switch">
-  <button class="lang-chip-btn" data-lang="ko" type="button">KO</button>
-  <button class="lang-chip-btn" data-lang="en" type="button">EN</button>
-  <button class="lang-chip-btn" data-lang="ja" type="button">JP</button>
-  <button class="lang-chip-btn" data-lang="zh" type="button">CN</button>
+<div class="lang-switch" id="globalLangSwitch" aria-label="language switch">
+  <div class="lang-box">
+    <button class="lang-btn app-lang-btn active" data-lang="ko" type="button">KR</button>
+    <button class="lang-btn app-lang-btn" data-lang="en" type="button">EN</button>
+    <button class="lang-btn app-lang-btn" data-lang="ja" type="button">JP</button>
+    <button class="lang-btn app-lang-btn" data-lang="zh" type="button">CN</button>
+  </div>
 </div>
 
 
@@ -833,7 +853,7 @@ function syncWeeklyFrameLanguage(){
   try{ if(frame && frame.contentWindow && typeof frame.contentWindow.setLanguage === 'function'){ frame.contentWindow.setLanguage(currentLang); } }catch(e){}
 }
 function updateLangButtons(){
-  document.querySelectorAll('.lang-chip-btn').forEach(btn=>btn.classList.toggle('active', btn.dataset.lang===currentLang));
+  document.querySelectorAll('.app-lang-btn').forEach(btn=>btn.classList.toggle('active', btn.dataset.lang===currentLang));
 }
 function applyDailyI18n(){
   const c = tr();
@@ -932,6 +952,8 @@ function switchTab(id){
   const key = id.replace('tab-','');
   const btn = document.getElementById('tabBtn-'+key);
   if(btn) btn.classList.add('active');
+  const globalLangSwitch = document.getElementById('globalLangSwitch');
+  if(globalLangSwitch) globalLangSwitch.classList.toggle('hidden', id==='tab-weekly');
   if(id==='tab-mypage') renderMypage();
   if(id==='tab-daily') initDailyLanding();
   if(id==='tab-weekly'){ initWeeklyLanding(); syncWeeklyFrameLanguage(); syncWeeklyFrameNickname(); }
@@ -1372,7 +1394,7 @@ if(globalNicknameInput){
   globalNicknameInput.addEventListener('change', saveGlobalNickname);
   globalNicknameInput.addEventListener('keydown', (e)=>{ if(e.key==='Enter'){ e.preventDefault(); saveGlobalNickname(); }});
 }
-document.querySelectorAll('.lang-chip-btn').forEach(btn=>btn.addEventListener('click', ()=>setAppLanguage(btn.dataset.lang)));
+document.querySelectorAll('.app-lang-btn').forEach(btn=>btn.addEventListener('click', ()=>setAppLanguage(btn.dataset.lang)));
 const weeklyFrame=document.getElementById('weeklyPixelFrame');
 if(weeklyFrame){ weeklyFrame.addEventListener('load', ()=>{ syncWeeklyFrameLanguage(); syncWeeklyFrameNickname(); }); }
 applyDailyI18n();
